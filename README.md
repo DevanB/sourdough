@@ -68,6 +68,37 @@ bun add playwright
 bunx playwright install
 ```
 
+### Code Coverage Driver (Xdebug)
+
+`composer test` (via `composer test:unit`) enforces 100% code coverage, which requires a coverage driver — **Xdebug** or **PCOV**. Without one, the suite fails with `ERROR No code coverage driver is available.`
+
+**Laravel Herd (macOS):** Herd bundles Xdebug, so no Herd Pro or manual compilation is needed — you just have to enable it for the CLI PHP that runs your tests.
+
+1. Locate the `php.ini` scanned by Herd's PHP:
+
+   ```bash
+   php --ini
+   ```
+
+   Use the path shown under *"Additional .ini files parsed"*, e.g. `~/Library/Application Support/Herd/config/php/85/php.ini`.
+
+2. Add the bundled Xdebug as a Zend extension. Match your PHP version (`85` for PHP 8.5) and CPU architecture (`arm64` on Apple Silicon, `x86` on Intel):
+
+   ```ini
+   zend_extension="/Applications/Herd.app/Contents/Resources/xdebug/xdebug-85-arm64.so"
+   xdebug.mode=off
+   ```
+
+   `xdebug.mode=off` keeps everyday PHP fast with zero overhead; the test suite exports `XDEBUG_MODE=coverage` itself when it needs coverage. Setting this in `php.ini` (rather than via a `-d` flag) is required so Pest's `--parallel` worker processes also load Xdebug.
+
+3. Verify it's active:
+
+   ```bash
+   php -m | grep xdebug
+   ```
+
+**Other environments:** install [Xdebug](https://xdebug.org/docs/install) or [PCOV](https://github.com/krakjoe/pcov) (`pecl install pcov`) for the PHP version on your `PATH`. Note that Herd's bundled PHP ships without `pecl`/`phpize`, so PCOV cannot be compiled against it — use the bundled Xdebug above instead.
+
 ### Verify Installation
 
 Run the test suite to ensure everything is configured correctly:
