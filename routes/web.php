@@ -7,9 +7,11 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserEmailResetNotificationController;
 use App\Http\Controllers\UserEmailVerificationController;
 use App\Http\Controllers\UserEmailVerificationNotificationController;
+use App\Http\Controllers\UserPasskeyController;
 use App\Http\Controllers\UserPasswordController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\UserTwoFactorAuthenticationController;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -40,7 +42,17 @@ Route::middleware('auth')->group(function (): void {
     // User Two-Factor Authentication...
     Route::get('settings/two-factor', [UserTwoFactorAuthenticationController::class, 'show'])
         ->name('two-factor.show');
+
+    // User Passkeys...
+    Route::get('settings/passkeys', [UserPasskeyController::class, 'show'])
+        ->name('passkeys.show');
 });
+
+// Passkey Endpoint Discovery...
+Route::get('.well-known/passkey-endpoints', fn (): JsonResponse => response()->json([
+    'enroll' => route('passkeys.show'),
+    'manage' => route('passkeys.show'),
+]))->name('well-known.passkeys');
 
 Route::middleware('guest')->group(function (): void {
     // User...

@@ -18,3 +18,18 @@ test('to array', function (): void {
             'updated_at',
         ]);
 });
+
+test('may have passkeys', function (): void {
+    $user = User::factory()->create();
+
+    expect($user->hasPasskeysEnabled())->toBeFalse();
+
+    $user->passkeys()->create([
+        'name' => 'MacBook Pro',
+        'credential_id' => 'credential-id',
+        'credential' => [],
+    ]);
+
+    expect($user->hasPasskeysEnabled())->toBeTrue()
+        ->and($user->passkeys()->count())->toBeOne();
+});
