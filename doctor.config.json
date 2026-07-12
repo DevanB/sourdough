@@ -1,0 +1,7 @@
+{
+  "$schema": "./node_modules/react-doctor/config/schema.json",
+  "deadCode": false,
+  "rules": {
+    "react-doctor/rendering-svg-precision": "off"
+  }
+}

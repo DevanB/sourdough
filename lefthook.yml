@@ -1,0 +1,23 @@
+pre-commit:
+  jobs:
+    - run: bun run lint
+      glob:
+        - "**/*.js"
+        - "**/*.jsx"
+        - "**/*.ts"
+        - "**/*.tsx"
+        - "**/*.json"
+        - "**/*.jsonc"
+        - "**/*.css"
+      stage_fixed: true
+    - name: react-doctor
+      run: |
+        score=$(bunx react-doctor . --score --diff 2>/dev/null)
+        if [ "$score" != "100" ]; then
+          echo "react-doctor score is $score/100 (required: 100)"
+          echo "Run 'bun run doctor' for details."
+          exit 1
+        fi
+      glob:
+        - "**/*.jsx"
+        - "**/*.tsx"

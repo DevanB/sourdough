@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 
 export function useFlashToast(): void {
     useEffect(() => {
-        return router.on('flash', (event) => {
+        const unsubscribe = router.on('flash', (event) => {
             const data = event.detail.flash.toast;
 
             if (!data) {
@@ -13,5 +13,9 @@ export function useFlashToast(): void {
 
             toast[data.type](data.message);
         });
+
+        return () => {
+            unsubscribe();
+        };
     }, []);
 }
