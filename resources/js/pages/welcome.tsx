@@ -84,7 +84,7 @@ export default function Welcome({
                                                 className="h-2.5 w-2.5"
                                             >
                                                 <path
-                                                    d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
+                                                    d="M7.71 6.96V2.79H3.54M2.5 8L7.5 3"
                                                     stroke="currentColor"
                                                     strokeLinecap="square"
                                                 />
@@ -116,7 +116,7 @@ export default function Welcome({
                                                 className="h-2.5 w-2.5"
                                             >
                                                 <path
-                                                    d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
+                                                    d="M7.71 6.96V2.79H3.54M2.5 8L7.5 3"
                                                     stroke="currentColor"
                                                     strokeLinecap="square"
                                                 />
