@@ -3,6 +3,12 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\SwitchTeamController;
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TeamInvitationAcceptanceController;
+use App\Http\Controllers\TeamInvitationController;
+use App\Http\Controllers\TeamMemberController;
+use App\Http\Controllers\TeamSelectionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserEmailResetNotificationController;
 use App\Http\Controllers\UserEmailVerificationController;
@@ -46,6 +52,35 @@ Route::middleware('auth')->group(function (): void {
     // User Passkeys...
     Route::get('settings/passkeys', [UserPasskeyController::class, 'show'])
         ->name('passkeys.show');
+
+    // Teams...
+    Route::get('settings/teams', [TeamController::class, 'index'])->name('teams.index');
+    Route::post('settings/teams', [TeamController::class, 'store'])->name('teams.store');
+    Route::get('settings/teams/{team}', [TeamController::class, 'edit'])->name('teams.edit');
+    Route::patch('settings/teams/{team}', [TeamController::class, 'update'])->name('teams.update');
+    Route::delete('settings/teams/{team}', [TeamController::class, 'destroy'])->name('teams.destroy');
+    Route::put('settings/teams/{team}/switch', SwitchTeamController::class)->name('teams.switch');
+
+    // Team Members...
+    Route::patch('settings/teams/{team}/members/{member}', [TeamMemberController::class, 'update'])->name('teams.members.update');
+    Route::delete('settings/teams/{team}/members/{member}', [TeamMemberController::class, 'destroy'])->name('teams.members.destroy');
+
+    // Team Invitations...
+    Route::post('settings/teams/{team}/invitations', [TeamInvitationController::class, 'store'])
+        ->middleware('throttle:6,1')
+        ->name('teams.invitations.store');
+    Route::delete('settings/teams/{team}/invitations/{invitation}', [TeamInvitationController::class, 'destroy'])
+        ->scopeBindings()
+        ->name('teams.invitations.destroy');
+
+    // Team Invitation Acceptance...
+    Route::get('invitations/{invitation:code}', [TeamInvitationAcceptanceController::class, 'show'])
+        ->name('team-invitations.show');
+    Route::post('invitations/{invitation:code}', [TeamInvitationAcceptanceController::class, 'store'])
+        ->name('team-invitations.accept');
+
+    // Team Selection...
+    Route::get('team-select', [TeamSelectionController::class, 'show'])->name('team-select.show');
 });
 
 // Passkey Endpoint Discovery...

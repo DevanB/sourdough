@@ -8,6 +8,7 @@ import { cn, toUrl } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
 import { show as showPasskeys } from '@/routes/passkeys';
 import { edit as editPassword } from '@/routes/password';
+import { index as teamsIndex } from '@/routes/teams';
 import { show as showTwoFactor } from '@/routes/two-factor';
 import { edit } from '@/routes/user-profile';
 import type { NavItem } from '@/types';
@@ -31,6 +32,11 @@ const sidebarNavItems: NavItem[] = [
     {
         title: 'Passkeys',
         href: showPasskeys(),
+        icon: null,
+    },
+    {
+        title: 'Teams',
+        href: teamsIndex(),
         icon: null,
     },
     {

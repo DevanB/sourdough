@@ -1,4 +1,5 @@
 import type { Auth } from '@/types/auth';
+import type { UserTeam } from '@/types/teams';
 import type { FlashToast } from '@/types/ui';
 
 declare module '@inertiajs/core' {
@@ -9,6 +10,8 @@ declare module '@inertiajs/core' {
         sharedPageProps: {
             name: string;
             auth: Auth;
+            currentTeam: UserTeam | null;
+            teams: UserTeam[];
             sidebarOpen: boolean;
             [key: string]: unknown;
         };
