@@ -1,0 +1,5 @@
+[install]
+# Supply-chain hardening: refuse to install npm package versions published less than
+# 3 days ago. Compromised releases are usually pulled from the registry within hours,
+# so a cooldown filters most of them at the install layer. 259200 seconds = 3 days.
+minimumReleaseAge = 259200
