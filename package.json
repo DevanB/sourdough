@@ -2,8 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vp build",
-        "build:ssr": "vp build && vp build --ssr",
+        "build": "vp build && vp build --ssr",
         "dev": "vp dev",
         "doctor": "react-doctor . --verbose",
         "lint": "NODE_OPTIONS='--experimental-strip-types' vp fmt resources/ && NODE_OPTIONS='--experimental-strip-types' vp lint --fix",
@@ -26,8 +25,8 @@
     },
     "dependencies": {
         "@headlessui/react": "^2.2.10",
-        "@inertiajs/react": "^3.5.0",
-        "@inertiajs/vite": "^3.5.0",
+        "@inertiajs/react": "^3.6.1",
+        "@inertiajs/vite": "^3.6.1",
         "@laravel/passkeys": "^0.2.0",
         "@radix-ui/react-avatar": "^1.2.1",
         "@radix-ui/react-checkbox": "^1.3.6",

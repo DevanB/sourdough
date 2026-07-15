@@ -12,8 +12,16 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        $this->withoutVite();
+        // Browser tests need built Vite assets so the client can hydrate/render.
+        if (! $this->runningBrowserTest()) {
+            $this->withoutVite();
+        }
 
         config(['inertia.ssr.enabled' => false]);
+    }
+
+    private function runningBrowserTest(): bool
+    {
+        return str_contains(static::class, '\\Browser\\');
     }
 }

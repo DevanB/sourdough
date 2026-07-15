@@ -66,6 +66,11 @@ jobs:
       - name: Build Assets
         run: bun run build
 
+      - name: Assert Client and SSR Build Artifacts
+        run: |
+          test -f public/build/manifest.json
+          test -f bootstrap/ssr/app.js
+
       - name: Get Playwright version
         id: playwright-version
         run: echo "version=$(bun pm ls 2>/dev/null | grep playwright | head -1 | sed 's/.*@//')" >> $GITHUB_OUTPUT
@@ -84,6 +89,103 @@ jobs:
       - name: Install Playwright System Dependencies
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: bunx playwright install-deps
+
+      - name: Verify Production SSR Hydration
+        run: |
+          set -euo pipefail
+
+          cleanup() {
+            php artisan inertia:stop-ssr >/dev/null 2>&1 || true
+            if [ -n "${LARAVEL_PID:-}" ] && kill -0 "$LARAVEL_PID" 2>/dev/null; then
+              kill "$LARAVEL_PID" >/dev/null 2>&1 || true
+              wait "$LARAVEL_PID" 2>/dev/null || true
+            fi
+          }
+          trap cleanup EXIT
+
+          php artisan inertia:start-ssr --runtime=node &
+          SSR_PID=$!
+
+          for i in $(seq 1 30); do
+            if php artisan inertia:check-ssr >/dev/null 2>&1; then
+              break
+            fi
+            if ! kill -0 "$SSR_PID" 2>/dev/null; then
+              echo "SSR process exited before becoming healthy"
+              exit 1
+            fi
+            sleep 1
+            if [ "$i" -eq 30 ]; then
+              echo "Timed out waiting for inertia:check-ssr"
+              exit 1
+            fi
+          done
+
+          # --no-reload is required so SESSION_DRIVER/CACHE_STORE/INERTIA_* env
+          # overrides are passed through to the PHP built-in server process.
+          SESSION_DRIVER=array CACHE_STORE=array INERTIA_SSR_THROW_ON_ERROR=true \
+            php artisan serve --host=127.0.0.1 --port=8000 --no-reload >/tmp/laravel-ssr-serve.log 2>&1 &
+          LARAVEL_PID=$!
+
+          for i in $(seq 1 30); do
+            code=$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:8000/" || echo '000')
+            if [ "$code" = "200" ]; then
+              break
+            fi
+            if ! kill -0 "$LARAVEL_PID" 2>/dev/null; then
+              echo "Laravel server exited before becoming ready"
+              cat /tmp/laravel-ssr-serve.log || true
+              exit 1
+            fi
+            sleep 1
+            if [ "$i" -eq 30 ]; then
+              echo "Timed out waiting for Laravel server (last HTTP $code)"
+              cat /tmp/laravel-ssr-serve.log || true
+              exit 1
+            fi
+          done
+
+          node --input-type=module <<'EOF'
+          import { chromium } from 'playwright';
+
+          const browser = await chromium.launch();
+          const page = await browser.newPage();
+          const pageErrors = [];
+          const consoleErrors = [];
+
+          page.on('pageerror', (error) => pageErrors.push(String(error)));
+          page.on('console', (msg) => {
+            if (msg.type() === 'error') {
+              consoleErrors.push(msg.text());
+            }
+          });
+
+          const response = await page.goto('http://127.0.0.1:8000/', {
+            waitUntil: 'networkidle',
+          });
+
+          if (!response || response.status() !== 200) {
+            throw new Error(`Expected HTTP 200, got ${response?.status()}`);
+          }
+
+          const serverRendered = await page.locator('[data-server-rendered="true"]').count();
+          if (serverRendered < 1) {
+            throw new Error('Expected data-server-rendered="true" on the page');
+          }
+
+          const bodyText = await page.locator('body').innerText();
+          if (!bodyText.includes('Laravel')) {
+            throw new Error('Expected visible page content containing "Laravel"');
+          }
+
+          if (pageErrors.length > 0 || consoleErrors.length > 0) {
+            throw new Error(
+              `Expected zero page/console errors.\nPage errors: ${JSON.stringify(pageErrors)}\nConsole errors: ${JSON.stringify(consoleErrors)}`,
+            );
+          }
+
+          await browser.close();
+          EOF
 
       - name: Cache Rector
         uses: actions/cache@v4
