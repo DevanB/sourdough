@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\ResolvePostLoginDestination;
 use App\Http\Requests\CreateSessionRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ final readonly class SessionController
         ]);
     }
 
-    public function store(CreateSessionRequest $request): RedirectResponse
+    public function store(CreateSessionRequest $request, ResolvePostLoginDestination $resolver): RedirectResponse
     {
         $user = $request->validateCredentials();
 
@@ -39,7 +40,7 @@ final readonly class SessionController
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended($resolver->handle($user));
     }
 
     public function destroy(Request $request): RedirectResponse

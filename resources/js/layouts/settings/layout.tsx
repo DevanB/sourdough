@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import type { PropsWithChildren } from 'react';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
@@ -8,11 +8,12 @@ import { cn, toUrl } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
 import { show as showPasskeys } from '@/routes/passkeys';
 import { edit as editPassword } from '@/routes/password';
+import { index as teamsIndex } from '@/routes/teams';
 import { show as showTwoFactor } from '@/routes/two-factor';
 import { edit } from '@/routes/user-profile';
 import type { NavItem } from '@/types';
 
-const sidebarNavItems: NavItem[] = [
+const getSidebarNavItems = (teamsEnabled: boolean): NavItem[] => [
     {
         title: 'Profile',
         href: edit(),
@@ -33,6 +34,15 @@ const sidebarNavItems: NavItem[] = [
         href: showPasskeys(),
         icon: null,
     },
+    ...(teamsEnabled
+        ? [
+              {
+                  title: 'Teams',
+                  href: teamsIndex(),
+                  icon: null,
+              },
+          ]
+        : []),
     {
         title: 'Appearance',
         href: editAppearance(),
@@ -42,6 +52,8 @@ const sidebarNavItems: NavItem[] = [
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
     const { isCurrentOrParentUrl } = useCurrentUrl();
+    const { features } = usePage().props;
+    const sidebarNavItems = getSidebarNavItems(features.teams);
 
     // When server-side rendering, we only render the layout on the client...
     if (typeof window === 'undefined') {
@@ -61,9 +73,9 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                         className="flex flex-col space-y-1 space-x-0"
                         aria-label="Settings"
                     >
-                        {sidebarNavItems.map((item, index) => (
+                        {sidebarNavItems.map((item) => (
                             <Button
-                                key={`${toUrl(item.href)}-${index}`}
+                                key={toUrl(item.href)}
                                 size="sm"
                                 variant="ghost"
                                 asChild

@@ -2,11 +2,12 @@ import { AppContent } from '@/components/app-content';
 import { AppShell } from '@/components/app-shell';
 import { AppSidebar } from '@/components/app-sidebar';
 import { AppSidebarHeader } from '@/components/app-sidebar-header';
+import { EMPTY_BREADCRUMBS } from '@/lib/empty-collections';
 import type { AppLayoutProps } from '@/types';
 
 export default function AppSidebarLayout({
     children,
-    breadcrumbs = [],
+    breadcrumbs = EMPTY_BREADCRUMBS,
 }: AppLayoutProps) {
     return (
         <AppShell variant="sidebar">

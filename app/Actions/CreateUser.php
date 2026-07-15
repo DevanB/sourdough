@@ -11,6 +11,8 @@ use SensitiveParameter;
 
 final readonly class CreateUser
 {
+    public function __construct(private CreateTeam $createTeam) {}
+
     /**
      * @param  array<string, mixed>  $attributes
      */
@@ -22,9 +24,11 @@ final readonly class CreateUser
                 'password' => $password,
             ]);
 
+            $this->createTeam->handle($user, "{$user->name}'s Team", isPersonal: true);
+
             event(new Registered($user));
 
-            return $user;
+            return $user->refresh();
         });
     }
 }

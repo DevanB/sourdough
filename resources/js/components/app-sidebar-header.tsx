@@ -1,9 +1,10 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { EMPTY_BREADCRUMBS } from '@/lib/empty-collections';
 import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
 
 export function AppSidebarHeader({
-    breadcrumbs = [],
+    breadcrumbs = EMPTY_BREADCRUMBS,
 }: {
     breadcrumbs?: BreadcrumbItemType[];
 }) {

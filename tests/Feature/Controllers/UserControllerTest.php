@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Actions\CreateTeam;
+use App\Enums\TeamRole;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Event;
@@ -33,7 +35,10 @@ it('may register a new user', function (): void {
     expect($user)->not->toBeNull()
         ->and($user->name)->toBe('Test User')
         ->and($user->email)->toBe('test@example.com')
-        ->and(Hash::check('password1234', $user->password))->toBeTrue();
+        ->and(Hash::check('password1234', $user->password))->toBeTrue()
+        ->and($user->personalTeam())->not->toBeNull()
+        ->and($user->personalTeam()->is_personal)->toBeTrue()
+        ->and($user->personalTeam()->name)->toBe("Test User's Team");
 
     $this->assertAuthenticatedAs($user);
 
@@ -184,4 +189,48 @@ it('redirects authenticated users away from registration', function (): void {
         ->get(route('register'));
 
     $response->assertRedirectToRoute('dashboard');
+});
+
+it('blocks account deletion when owning a shared team with other members', function (): void {
+    $user = User::factory()->create([
+        'password' => Hash::make('password'),
+    ]);
+    $team = resolve(CreateTeam::class)->handle($user, 'Acme');
+    $member = User::factory()->create();
+
+    $team->memberships()->create([
+        'user_id' => $member->id,
+        'role' => TeamRole::Member,
+    ]);
+
+    $response = $this->actingAs($user)
+        ->fromRoute('user-profile.edit')
+        ->delete(route('user.destroy'), [
+            'password' => 'password',
+        ]);
+
+    $response->assertRedirectToRoute('user-profile.edit')
+        ->assertSessionHasErrors('password');
+
+    expect($user->fresh())->not->toBeNull();
+});
+
+it('allows account deletion when the user only owns solo teams', function (): void {
+    $user = User::factory()->create([
+        'password' => Hash::make('password'),
+    ]);
+
+    resolve(CreateTeam::class)->handle($user, 'Acme');
+
+    $response = $this->actingAs($user)
+        ->fromRoute('user-profile.edit')
+        ->delete(route('user.destroy'), [
+            'password' => 'password',
+        ]);
+
+    $response->assertRedirectToRoute('home');
+
+    expect($user->fresh())->toBeNull();
+
+    $this->assertGuest();
 });

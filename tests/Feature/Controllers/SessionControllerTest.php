@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Actions\CreateTeam;
 use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Event;
@@ -207,4 +208,44 @@ it('dispatches lockout event when rate limit is reached', function (): void {
     }
 
     Event::assertDispatched(Lockout::class);
+});
+
+it('redirects users with multiple teams to team select', function (): void {
+    $user = User::factory()->withoutTwoFactor()->create([
+        'email' => 'test@example.com',
+        'password' => Hash::make('password'),
+    ]);
+
+    resolve(CreateTeam::class)->handle($user, 'Acme');
+
+    $response = $this->fromRoute('login')
+        ->post(route('login.store'), [
+            'email' => 'test@example.com',
+            'password' => 'password',
+        ]);
+
+    $response->assertRedirectToRoute('team-select.show');
+
+    $this->assertAuthenticatedAs($user);
+});
+
+it('prefers the intended url over team select', function (): void {
+    $user = User::factory()->withoutTwoFactor()->create([
+        'email' => 'test@example.com',
+        'password' => Hash::make('password'),
+    ]);
+
+    resolve(CreateTeam::class)->handle($user, 'Acme');
+
+    $this->get(route('user-profile.edit'));
+
+    $response = $this->fromRoute('login')
+        ->post(route('login.store'), [
+            'email' => 'test@example.com',
+            'password' => 'password',
+        ]);
+
+    $response->assertRedirectToRoute('user-profile.edit');
+
+    $this->assertAuthenticatedAs($user);
 });

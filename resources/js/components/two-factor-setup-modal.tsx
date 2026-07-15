@@ -1,7 +1,7 @@
 import { Form } from '@inertiajs/react';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { Check, Copy, ScanLine } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AlertError from '@/components/alert-error';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -120,10 +120,13 @@ function TwoFactorSetupStep({
                                         type="text"
                                         readOnly
                                         value={manualSetupKey}
+                                        aria-label="Two-factor setup key"
                                         className="h-full w-full bg-background p-3 text-foreground outline-none"
                                     />
                                     <button
+                                        type="button"
                                         onClick={() => copy(manualSetupKey)}
+                                        aria-label="Copy setup key"
                                         className="border-l border-border px-3 hover:bg-muted"
                                     >
                                         <IconComponent className="w-4" />
@@ -149,9 +152,13 @@ function TwoFactorVerificationStep({
     const pinInputContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        setTimeout(() => {
+        const timeoutId = window.setTimeout(() => {
             pinInputContainerRef.current?.querySelector('input')?.focus();
         }, 0);
+
+        return () => {
+            window.clearTimeout(timeoutId);
+        };
     }, []);
 
     return (
@@ -187,7 +194,7 @@ function TwoFactorVerificationStep({
                                         { length: OTP_MAX_LENGTH },
                                         (_, index) => (
                                             <InputOTPSlot
-                                                key={index}
+                                                key={`otp-slot-${index + 1}`}
                                                 index={index}
                                             />
                                         ),
@@ -240,6 +247,39 @@ type Props = {
     errors: string[];
 };
 
+function getModalConfig(
+    twoFactorEnabled: boolean,
+    showVerificationStep: boolean,
+): {
+    title: string;
+    description: string;
+    buttonText: string;
+} {
+    if (twoFactorEnabled) {
+        return {
+            title: 'Two-factor authentication enabled',
+            description:
+                'Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app.',
+            buttonText: 'Close',
+        };
+    }
+
+    if (showVerificationStep) {
+        return {
+            title: 'Verify authentication code',
+            description: 'Enter the 6-digit code from your authenticator app',
+            buttonText: 'Continue',
+        };
+    }
+
+    return {
+        title: 'Enable two-factor authentication',
+        description:
+            'To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app',
+        buttonText: 'Continue',
+    };
+}
+
 export default function TwoFactorSetupModal({
     isOpen,
     onClose,
@@ -254,38 +294,22 @@ export default function TwoFactorSetupModal({
     const [showVerificationStep, setShowVerificationStep] =
         useState<boolean>(false);
 
-    const modalConfig = useMemo<{
-        title: string;
-        description: string;
-        buttonText: string;
-    }>(() => {
+    const modalConfig = getModalConfig(twoFactorEnabled, showVerificationStep);
+
+    function resetModalState(): void {
+        setShowVerificationStep(false);
+
         if (twoFactorEnabled) {
-            return {
-                title: 'Two-factor authentication enabled',
-                description:
-                    'Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app.',
-                buttonText: 'Close',
-            };
+            clearSetupData();
         }
+    }
 
-        if (showVerificationStep) {
-            return {
-                title: 'Verify authentication code',
-                description:
-                    'Enter the 6-digit code from your authenticator app',
-                buttonText: 'Continue',
-            };
-        }
+    function handleClose(): void {
+        resetModalState();
+        onClose();
+    }
 
-        return {
-            title: 'Enable two-factor authentication',
-            description:
-                'To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app',
-            buttonText: 'Continue',
-        };
-    }, [twoFactorEnabled, showVerificationStep]);
-
-    const handleModalNextStep = useCallback(() => {
+    function handleModalNextStep(): void {
         if (requiresConfirmation) {
             setShowVerificationStep(true);
             return;
@@ -293,29 +317,21 @@ export default function TwoFactorSetupModal({
 
         clearSetupData();
         onClose();
-    }, [requiresConfirmation, clearSetupData, onClose]);
+    }
 
-    const resetModalState = useCallback(() => {
-        setShowVerificationStep(false);
-
-        if (twoFactorEnabled) {
-            clearSetupData();
+    function handleOpenChange(open: boolean): void {
+        if (!open) {
+            handleClose();
+            return;
         }
-    }, [twoFactorEnabled, clearSetupData]);
 
-    useEffect(() => {
-        if (isOpen && !qrCodeSvg) {
+        if (!qrCodeSvg) {
             void fetchSetupData();
         }
-    }, [isOpen, qrCodeSvg, fetchSetupData]);
-
-    const handleClose = useCallback(() => {
-        resetModalState();
-        onClose();
-    }, [onClose, resetModalState]);
+    }
 
     return (
-        <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader className="flex items-center justify-center">
                     <GridScanIcon />
