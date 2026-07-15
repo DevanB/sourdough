@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import type { PropsWithChildren } from 'react';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,7 @@ import { show as showTwoFactor } from '@/routes/two-factor';
 import { edit } from '@/routes/user-profile';
 import type { NavItem } from '@/types';
 
-const sidebarNavItems: NavItem[] = [
+const getSidebarNavItems = (teamsEnabled: boolean): NavItem[] => [
     {
         title: 'Profile',
         href: edit(),
@@ -34,11 +34,15 @@ const sidebarNavItems: NavItem[] = [
         href: showPasskeys(),
         icon: null,
     },
-    {
-        title: 'Teams',
-        href: teamsIndex(),
-        icon: null,
-    },
+    ...(teamsEnabled
+        ? [
+              {
+                  title: 'Teams',
+                  href: teamsIndex(),
+                  icon: null,
+              },
+          ]
+        : []),
     {
         title: 'Appearance',
         href: editAppearance(),
@@ -48,6 +52,8 @@ const sidebarNavItems: NavItem[] = [
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
     const { isCurrentOrParentUrl } = useCurrentUrl();
+    const { features } = usePage().props;
+    const sidebarNavItems = getSidebarNavItems(features.teams);
 
     // When server-side rendering, we only render the layout on the client...
     if (typeof window === 'undefined') {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Support\Features;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -32,6 +33,7 @@ final class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
+        $teamsEnabled = Features::teams();
 
         return [
             ...parent::share($request),
@@ -39,10 +41,13 @@ final class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $user,
             ],
-            'currentTeam' => fn (): ?array => $user?->currentTeam
+            'features' => [
+                'teams' => $teamsEnabled,
+            ],
+            'currentTeam' => fn (): ?array => $teamsEnabled && $user?->currentTeam
                 ? $user->toUserTeam($user->currentTeam)->toArray()
                 : null,
-            'teams' => fn (): array => $user
+            'teams' => fn (): array => $teamsEnabled && $user
                 ? $user->userTeams()->map->toArray()->all()
                 : [],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
