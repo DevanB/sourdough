@@ -1,0 +1,11 @@
+"$schema" = "https://conductor.build/schemas/settings.repo.schema.json"
+
+[scripts]
+setup = "COMPOSER_NO_INTERACTION=1 composer setup"
+archive = "true"
+run_mode = "nonconcurrent"
+
+[scripts.run.dev]
+command = 'APP_URL="http://127.0.0.1:$CONDUCTOR_PORT" bunx concurrently -c "#93c5fd,#c4b5fd,#fb7185,#fdba74" "php artisan serve --host=127.0.0.1 --port=$CONDUCTOR_PORT" "php artisan queue:listen --tries=1" "php artisan pail --timeout=0" "bun run dev" --names=server,queue,logs,vite --kill-others'
+default = true
+icon = "play"
