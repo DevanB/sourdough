@@ -21,7 +21,7 @@ it('may create a team', function (): void {
 it('may create a personal team', function (): void {
     $user = User::factory()->withoutPersonalTeam()->create();
 
-    $team = resolve(CreateTeam::class)->handle($user, "{$user->name}'s Team", isPersonal: true);
+    $team = resolve(CreateTeam::class)->handle($user, $user->name."'s Team", isPersonal: true);
 
     expect($team->is_personal)->toBeTrue()
         ->and($user->fresh()->personalTeam()?->is($team))->toBeTrue();

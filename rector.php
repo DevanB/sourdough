@@ -27,6 +27,7 @@ return RectorConfig::configure()
         PestSetList::PEST_CODE_QUALITY,
         PestSetList::PEST_CHAIN,
         PestSetList::PEST_LARAVEL,
+        PestSetList::PEST_BROWSER,
     ])
     ->withImportNames(
         removeUnusedImports: true,

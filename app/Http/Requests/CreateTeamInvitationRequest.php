@@ -39,7 +39,7 @@ final class CreateTeamInvitationRequest extends FormRequest
         return [
             function (Validator $validator): void {
                 $team = $this->team();
-                $email = mb_strtolower((string) $this->input('email'));
+                $email = mb_strtolower($this->string('email')->value());
 
                 $isMember = $team->members()
                     ->whereRaw('LOWER(users.email) = ?', [$email])
@@ -66,9 +66,7 @@ final class CreateTeamInvitationRequest extends FormRequest
     {
         $team = $this->route('team');
 
-        if (! $team instanceof Team) {
-            throw new LogicException('The team route parameter must be a team model.');
-        }
+        throw_unless($team instanceof Team, LogicException::class, 'The team route parameter must be a team model.');
 
         return $team;
     }

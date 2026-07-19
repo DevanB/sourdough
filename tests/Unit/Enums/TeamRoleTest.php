@@ -31,7 +31,7 @@ it('returns permissions for the admin role', function (): void {
 });
 
 it('returns no permissions for the member role', function (): void {
-    expect(TeamRole::Member->permissions())->toBe([]);
+    expect(TeamRole::Member->permissions())->toBeEmpty();
 });
 
 it('checks whether a role has a permission', function (): void {

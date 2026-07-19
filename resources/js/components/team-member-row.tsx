@@ -1,6 +1,5 @@
 import { Form, router } from '@inertiajs/react';
 import { X } from 'lucide-react';
-import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {

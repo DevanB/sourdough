@@ -38,6 +38,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property-read CarbonInterface $created_at
  * @property-read CarbonInterface $updated_at
  * @property-read Team|null $currentTeam
+ * @property-read Membership|null $pivot
  */
 #[Hidden([
     'password',
@@ -155,10 +156,13 @@ final class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 
     public function fallbackTeam(?Team $excluding = null): ?Team
     {
-        return $this->teams()
-            ->when($excluding, fn ($query) => $query->where('teams.id', '!=', $excluding->id))
-            ->orderByRaw('LOWER(teams.name)')
-            ->first();
+        $query = $this->teams()->orderByRaw('LOWER(teams.name)');
+
+        if ($excluding instanceof Team) {
+            $query->where('teams.id', '!=', $excluding->id);
+        }
+
+        return $query->first();
     }
 
     public function toUserTeam(Team $team): UserTeam

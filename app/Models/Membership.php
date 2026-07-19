@@ -6,10 +6,12 @@ namespace App\Models;
 
 use App\Enums\TeamRole;
 use Carbon\CarbonInterface;
+use Database\Factories\MembershipFactory;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Override;
 
 /**
  * @property-read string $id
@@ -19,15 +21,13 @@ use Override;
  * @property-read CarbonInterface $created_at
  * @property-read CarbonInterface $updated_at
  */
+#[Table(name: 'team_members')]
 final class Membership extends Pivot
 {
-    use HasUuids;
+    /** @use HasFactory<MembershipFactory> */
+    use HasFactory;
 
-    /**
-     * @var string
-     */
-    #[Override]
-    protected $table = 'team_members';
+    use HasUuids;
 
     /**
      * @return array<string, string>

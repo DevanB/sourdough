@@ -19,7 +19,7 @@ final readonly class DeleteTeam
                 ->each(function (User $member): void {
                     $personalTeam = $member->personalTeam();
 
-                    if ($personalTeam !== null) {
+                    if ($personalTeam instanceof Team) {
                         $member->update(['current_team_id' => $personalTeam->id]);
                     }
                 });
@@ -28,7 +28,7 @@ final readonly class DeleteTeam
 
             $actor->update(['current_team_id' => $fallback?->id]);
 
-            if ($fallback !== null) {
+            if ($fallback instanceof Team) {
                 $actor->setRelation('currentTeam', $fallback);
             } else {
                 $actor->unsetRelation('currentTeam');

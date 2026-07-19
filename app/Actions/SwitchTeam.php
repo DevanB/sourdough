@@ -12,9 +12,7 @@ final readonly class SwitchTeam
 {
     public function handle(User $user, Team $team): void
     {
-        if (! $user->belongsToTeam($team)) {
-            throw new RuntimeException('User does not belong to the team.');
-        }
+        throw_unless($user->belongsToTeam($team), RuntimeException::class, 'User does not belong to the team.');
 
         $user->update(['current_team_id' => $team->id]);
         $user->setRelation('currentTeam', $team);

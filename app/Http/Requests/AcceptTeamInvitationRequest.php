@@ -19,7 +19,7 @@ final class AcceptTeamInvitationRequest extends FormRequest
             return false;
         }
 
-        return strcasecmp($invitation->email, $user->email) === 0;
+        return strcasecmp($invitation->email, (string) $user->email) === 0;
     }
 
     /**
@@ -34,9 +34,7 @@ final class AcceptTeamInvitationRequest extends FormRequest
     {
         $invitation = $this->route('invitation');
 
-        if (! $invitation instanceof TeamInvitation) {
-            throw new LogicException('The invitation route parameter must be a team invitation model.');
-        }
+        throw_unless($invitation instanceof TeamInvitation, LogicException::class, 'The invitation route parameter must be a team invitation model.');
 
         return $invitation;
     }

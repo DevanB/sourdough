@@ -24,7 +24,7 @@ final readonly class CreateUser
                 'password' => $password,
             ]);
 
-            $this->createTeam->handle($user, "{$user->name}'s Team", isPersonal: true);
+            $this->createTeam->handle($user, $user->name."'s Team", isPersonal: true);
 
             event(new Registered($user));
 
