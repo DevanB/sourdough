@@ -28,9 +28,7 @@ final class CancelTeamInvitationRequest extends FormRequest
     {
         $team = $this->route('team');
 
-        if (! $team instanceof Team) {
-            throw new LogicException('The team route parameter must be a team model.');
-        }
+        throw_unless($team instanceof Team, LogicException::class, 'The team route parameter must be a team model.');
 
         return $team;
     }

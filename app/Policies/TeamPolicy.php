@@ -51,7 +51,10 @@ final class TeamPolicy
             return false;
         }
 
-        return $user->hasTeamPermission($team, 'member:remove')
-            || $user->is($member);
+        if ($user->hasTeamPermission($team, 'member:remove')) {
+            return true;
+        }
+
+        return $user->is($member);
     }
 }

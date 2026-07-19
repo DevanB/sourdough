@@ -33,9 +33,7 @@ final class UpdateTeamMemberRequest extends FormRequest
     {
         $team = $this->route('team');
 
-        if (! $team instanceof Team) {
-            throw new LogicException('The team route parameter must be a team model.');
-        }
+        throw_unless($team instanceof Team, LogicException::class, 'The team route parameter must be a team model.');
 
         return $team;
     }
@@ -44,9 +42,7 @@ final class UpdateTeamMemberRequest extends FormRequest
     {
         $member = $this->route('member');
 
-        if (! $member instanceof User) {
-            throw new LogicException('The member route parameter must be a user model.');
-        }
+        throw_unless($member instanceof User, LogicException::class, 'The member route parameter must be a user model.');
 
         return $member;
     }

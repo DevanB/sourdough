@@ -21,3 +21,13 @@ pre-commit:
       glob:
         - "**/*.jsx"
         - "**/*.tsx"
+    - name: rector
+      run: vendor/bin/rector process {staged_files}
+      glob:
+        - "**/*.php"
+      stage_fixed: true
+    - name: pint
+      run: vendor/bin/pint {staged_files}
+      glob:
+        - "**/*.php"
+      stage_fixed: true

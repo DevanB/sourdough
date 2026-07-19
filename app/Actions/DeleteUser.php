@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +17,7 @@ final readonly class DeleteUser
         DB::transaction(function () use ($user): void {
             $user->ownedTeams()
                 ->get()
-                ->each(fn ($team) => $this->deleteTeam->handle($team, $user));
+                ->each(fn (Team $team) => $this->deleteTeam->handle($team, $user));
 
             $user->delete();
         });

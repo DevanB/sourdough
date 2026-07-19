@@ -40,13 +40,13 @@ final class UserFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (User $user): void {
-            if (self::$withoutPersonalTeam?->contains($user) === true) {
-                self::$withoutPersonalTeam->detach($user);
+            if (self::$withoutPersonalTeam?->offsetExists($user) === true) {
+                self::$withoutPersonalTeam->offsetUnset($user);
 
                 return;
             }
 
-            resolve(CreateTeam::class)->handle($user, "{$user->name}'s Team", isPersonal: true);
+            resolve(CreateTeam::class)->handle($user, $user->name."'s Team", isPersonal: true);
         });
     }
 

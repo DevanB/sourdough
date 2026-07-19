@@ -17,15 +17,13 @@ final readonly class CreateTeamInvitation
 {
     public function handle(Team $team, User $inviter, string $email, TeamRole $role): TeamInvitation
     {
-        $invitation = DB::transaction(function () use ($team, $inviter, $email, $role): TeamInvitation {
-            return $team->invitations()->create([
-                'email' => $email,
-                'role' => $role,
-                'code' => Str::random(64),
-                'invited_by' => $inviter->id,
-                'expires_at' => now()->addDays(TeamInvitation::EXPIRY_DAYS),
-            ]);
-        });
+        $invitation = DB::transaction(fn (): TeamInvitation => $team->invitations()->create([
+            'email' => $email,
+            'role' => $role,
+            'code' => Str::random(64),
+            'invited_by' => $inviter->id,
+            'expires_at' => now()->addDays(TeamInvitation::EXPIRY_DAYS),
+        ]));
 
         Notification::route('mail', $invitation->email)
             ->notify(new TeamInvitationNotification($invitation));
