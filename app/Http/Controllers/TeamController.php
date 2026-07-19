@@ -76,7 +76,7 @@ final readonly class TeamController
                     'email' => $invitation->email,
                     'role' => $invitation->role->value,
                     'roleLabel' => $invitation->role->label(),
-                    'createdAt' => $invitation->created_at?->toIso8601String(),
+                    'createdAt' => $invitation->created_at->toIso8601String(),
                 ])->all(),
             'permissions' => $user->toTeamPermissions($team)->toArray(),
             'assignableRoles' => TeamRole::assignable(),

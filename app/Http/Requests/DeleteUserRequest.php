@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Models\Team;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
@@ -36,7 +37,7 @@ final class DeleteUserRequest extends FormRequest
                 $ownsSharedTeam = $user->ownedTeams()
                     ->withCount('members')
                     ->get()
-                    ->contains(fn ($team): bool => $team->members_count > 1);
+                    ->contains(fn (Team $team): bool => $team->members_count > 1);
 
                 if ($ownsSharedTeam) {
                     $validator->errors()->add(

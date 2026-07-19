@@ -6,6 +6,7 @@ use App\Actions\CreateTeam;
 use App\Http\Responses\PasskeyLoginResponse;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 it('returns a json redirect payload', function (): void {
@@ -36,5 +37,29 @@ it('targets team select when the user has multiple teams', function (): void {
     expect($response)->toBeInstanceOf(JsonResponse::class)
         ->and($response->getData(true))->toBe([
             'redirect' => url(route('team-select.show', absolute: false)),
+        ]);
+});
+
+it('redirects when the request does not want json', function (): void {
+    $user = User::factory()->create();
+
+    $request = Request::create('/passkeys/login', 'POST');
+    $request->setUserResolver(fn (): User => $user);
+
+    $response = resolve(PasskeyLoginResponse::class)->toResponse($request);
+
+    expect($response)->toBeInstanceOf(RedirectResponse::class)
+        ->and($response->getTargetUrl())->toBe(url(route('dashboard', absolute: false)));
+});
+
+it('falls back to the dashboard when no user is authenticated', function (): void {
+    $request = Request::create('/passkeys/login', 'POST');
+    $request->headers->set('Accept', 'application/json');
+
+    $response = resolve(PasskeyLoginResponse::class)->toResponse($request);
+
+    expect($response)->toBeInstanceOf(JsonResponse::class)
+        ->and($response->getData(true))->toBe([
+            'redirect' => url(route('dashboard', absolute: false)),
         ]);
 });

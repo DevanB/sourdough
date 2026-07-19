@@ -39,7 +39,7 @@ final class CreateTeamInvitationRequest extends FormRequest
         return [
             function (Validator $validator): void {
                 $team = $this->team();
-                $email = mb_strtolower((string) $this->input('email'));
+                $email = mb_strtolower($this->string('email')->value());
 
                 $isMember = $team->members()
                     ->whereRaw('LOWER(users.email) = ?', [$email])

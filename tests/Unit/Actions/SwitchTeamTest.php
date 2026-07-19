@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Actions\CreateTeam;
 use App\Actions\SwitchTeam;
 use App\Models\User;
-use RuntimeException;
 
 it('may switch the current team', function (): void {
     $user = User::factory()->create();

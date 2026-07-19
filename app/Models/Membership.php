@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\TeamRole;
 use Carbon\CarbonInterface;
+use Database\Factories\MembershipFactory;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,7 +24,9 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 #[Table(name: 'team_members')]
 final class Membership extends Pivot
 {
+    /** @use HasFactory<MembershipFactory> */
     use HasFactory;
+
     use HasUuids;
 
     /**
