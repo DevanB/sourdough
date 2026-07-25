@@ -54,6 +54,25 @@ it('may create a session with remember me', function (): void {
     $this->assertAuthenticatedAs($user);
 });
 
+it('rejects undeclared fields', function (): void {
+    User::factory()->withoutTwoFactor()->create([
+        'email' => 'test@example.com',
+        'password' => Hash::make('password'),
+    ]);
+
+    $response = $this->fromRoute('login')
+        ->post(route('login.store'), [
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'is_admin' => true,
+        ]);
+
+    $response->assertRedirectToRoute('login')
+        ->assertSessionHasErrors('is_admin');
+
+    $this->assertGuest();
+});
+
 it('redirects to two-factor challenge when enabled', function (): void {
     $user = User::factory()->create([
         'email' => 'test@example.com',
