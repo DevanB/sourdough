@@ -67,6 +67,8 @@ updates:
       - dependency-name: "@rollup/rollup-linux-x64-gnu"
       - dependency-name: "lightningcss-linux-x64-gnu"
       - dependency-name: "@tailwindcss/oxide-linux-x64-gnu"
+      # TypeScript 7's native compiler binaries; pinned exactly by `typescript`.
+      - dependency-name: "@typescript/typescript-*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
