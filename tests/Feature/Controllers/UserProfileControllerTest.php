@@ -14,7 +14,7 @@ it('renders profile edit page', function (): void {
         ->get(route('user-profile.edit'));
 
     $response->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('user-profile/edit')
             ->has('status'));
 });

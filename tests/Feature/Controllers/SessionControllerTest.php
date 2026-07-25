@@ -15,7 +15,7 @@ it('renders login page', function (): void {
         ->get(route('login'));
 
     $response->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('session/create')
             ->has('canResetPassword')
             ->has('status'));

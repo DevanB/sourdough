@@ -14,7 +14,7 @@ it('renders passkeys page', function (): void {
         ->get(route('passkeys.show'));
 
     $response->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('user-passkey/show')
             ->where('canManagePasskeys', true)
             ->where('passkeys', []));
@@ -40,7 +40,7 @@ it('lists the passkeys of the user', function (): void {
         ->get(route('passkeys.show'));
 
     $response->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('user-passkey/show')
             ->where('passkeys.0.id', $passkey->id)
             ->where('passkeys.0.name', 'MacBook Pro')

@@ -16,7 +16,7 @@ it('renders the teams index', function (): void {
         ->get(route('teams.index'));
 
     $response->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('teams/index')
             ->has('teams', 1));
 });
@@ -57,7 +57,7 @@ it('renders the team edit page for members', function (): void {
         ->get(route('teams.edit', $team));
 
     $response->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('teams/edit')
             ->where('team.name', 'Acme')
             ->has('members')

@@ -15,7 +15,7 @@ it('renders registration page', function (): void {
         ->get(route('register'));
 
     $response->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page->component('user/create'));
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page->component('user/create'));
 });
 
 it('may register a new user', function (): void {

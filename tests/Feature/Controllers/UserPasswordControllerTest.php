@@ -15,7 +15,7 @@ it('renders reset password page', function (): void {
         ->get(route('password.reset', ['token' => 'fake-token']));
 
     $response->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('user-password/create')
             ->has('email')
             ->has('token'));
@@ -132,7 +132,7 @@ it('renders edit password page', function (): void {
         ->get(route('password.edit'));
 
     $response->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page->component('user-password/edit'));
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page->component('user-password/edit'));
 });
 
 it('may update password', function (): void {

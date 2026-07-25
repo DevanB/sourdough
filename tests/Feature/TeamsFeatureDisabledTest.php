@@ -66,7 +66,7 @@ it('shares the disabled feature state without team data', function (): void {
         ->get(route('dashboard'));
 
     $response->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->where('features.teams', false)
             ->where('currentTeam', null)
             ->has('teams', 0));

@@ -57,7 +57,7 @@ it('renders the invitation page', function (): void {
         ->get(route('team-invitations.show', $invitation->code));
 
     $response->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('team-invitations/show')
             ->where('invitation.email', 'invitee@example.com')
             ->where('invitation.emailMatches', true)
@@ -81,7 +81,7 @@ it('flags email mismatches on the invitation page', function (): void {
         ->get(route('team-invitations.show', $invitation->code));
 
     $response->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->where('invitation.emailMatches', false));
 });
 
@@ -101,7 +101,7 @@ it('flags expired invitations', function (): void {
         ->get(route('team-invitations.show', $invitation->code));
 
     $response->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->where('invitation.isExpired', true)
             ->where('invitation.isPending', false));
 });

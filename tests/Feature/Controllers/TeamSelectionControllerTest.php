@@ -15,7 +15,7 @@ it('renders team selection when the user has multiple teams', function (): void 
         ->get(route('team-select.show'));
 
     $response->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('team-select/show')
             ->has('teams', 2));
 });
