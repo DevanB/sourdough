@@ -6,6 +6,7 @@ use App\Actions\CreateTeam;
 use App\Enums\TeamRole;
 use App\Models\User;
 use Inertia\Support\SessionKey;
+use Inertia\Testing\AssertableInertia;
 
 it('renders the teams index', function (): void {
     $user = User::factory()->create();
@@ -15,7 +16,7 @@ it('renders the teams index', function (): void {
         ->get(route('teams.index'));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page) => $page
             ->component('teams/index')
             ->has('teams', 1));
 });
@@ -29,7 +30,10 @@ it('may create a team', function (): void {
             'name' => 'Acme',
         ]);
 
-    $team = $user->fresh()->teams()->where('name', 'Acme')->first();
+    $freshUser = $user->fresh();
+    $this->assertNotNull($freshUser);
+    $team = $freshUser->teams()->where('name', 'Acme')->first();
+    $this->assertNotNull($team);
 
     $response->assertRedirectToRoute('teams.edit', $team)
         ->assertSessionHas(SessionKey::FLASH_DATA, [
@@ -39,8 +43,9 @@ it('may create a team', function (): void {
             ],
         ]);
 
-    expect($team)->not->toBeNull()
-        ->and($user->fresh()->current_team_id)->toBe($team->id);
+    $freshUser = $user->fresh();
+    $this->assertNotNull($freshUser);
+    expect($freshUser->current_team_id)->toBe($team->id);
 });
 
 it('renders the team edit page for members', function (): void {
@@ -52,7 +57,7 @@ it('renders the team edit page for members', function (): void {
         ->get(route('teams.edit', $team));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page) => $page
             ->component('teams/edit')
             ->where('team.name', 'Acme')
             ->has('members')
@@ -92,7 +97,9 @@ it('may update a team', function (): void {
             ],
         ]);
 
-    expect($team->fresh()->name)->toBe('Renamed');
+    $freshTeam = $team->fresh();
+    $this->assertNotNull($freshTeam);
+    expect($freshTeam->name)->toBe('Renamed');
 });
 
 it('forbids updating a team without permission', function (): void {
@@ -117,6 +124,7 @@ it('forbids updating a team without permission', function (): void {
 it('may delete a team when the name matches', function (): void {
     $user = User::factory()->create();
     $personal = $user->personalTeam();
+    $this->assertNotNull($personal);
     $team = resolve(CreateTeam::class)->handle($user, 'Acme');
 
     $response = $this->actingAs($user)
@@ -133,8 +141,10 @@ it('may delete a team when the name matches', function (): void {
             ],
         ]);
 
+    $freshUser = $user->fresh();
+    $this->assertNotNull($freshUser);
     expect($team->fresh())->toBeNull()
-        ->and($user->fresh()->current_team_id)->toBe($personal->id);
+        ->and($freshUser->current_team_id)->toBe($personal->id);
 });
 
 it('requires the team name to delete a team', function (): void {
@@ -156,6 +166,7 @@ it('requires the team name to delete a team', function (): void {
 it('forbids deleting a personal team', function (): void {
     $user = User::factory()->create();
     $team = $user->personalTeam();
+    $this->assertNotNull($team);
 
     $response = $this->actingAs($user)
         ->fromRoute('teams.edit', $team)
@@ -171,6 +182,7 @@ it('reassigns other members current team when deleting', function (): void {
     $team = resolve(CreateTeam::class)->handle($owner, 'Acme');
     $member = User::factory()->create();
     $memberPersonal = $member->personalTeam();
+    $this->assertNotNull($memberPersonal);
 
     $team->memberships()->create([
         'user_id' => $member->id,
@@ -186,12 +198,15 @@ it('reassigns other members current team when deleting', function (): void {
 
     $response->assertRedirectToRoute('teams.index');
 
-    expect($member->fresh()->current_team_id)->toBe($memberPersonal->id);
+    $freshMember = $member->fresh();
+    $this->assertNotNull($freshMember);
+    expect($freshMember->current_team_id)->toBe($memberPersonal->id);
 });
 
 it('may switch teams', function (): void {
     $user = User::factory()->create();
     $personal = $user->personalTeam();
+    $this->assertNotNull($personal);
     $team = resolve(CreateTeam::class)->handle($user, 'Acme');
 
     $response = $this->actingAs($user)
@@ -206,7 +221,9 @@ it('may switch teams', function (): void {
             ],
         ]);
 
-    expect($user->fresh()->current_team_id)->toBe($personal->id)
+    $freshUser = $user->fresh();
+    $this->assertNotNull($freshUser);
+    expect($freshUser->current_team_id)->toBe($personal->id)
         ->and($team->fresh())->not->toBeNull();
 });
 

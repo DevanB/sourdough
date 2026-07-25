@@ -9,13 +9,20 @@ use App\Models\User;
 it('may switch the current team', function (): void {
     $user = User::factory()->create();
     $personal = $user->personalTeam();
+    $this->assertNotNull($personal);
     $team = resolve(CreateTeam::class)->handle($user, 'Acme');
 
-    expect($user->fresh()->current_team_id)->toBe($team->id);
+    $freshUser = $user->fresh();
+    $this->assertNotNull($freshUser);
+    expect($freshUser->current_team_id)->toBe($team->id);
 
-    resolve(SwitchTeam::class)->handle($user->fresh(), $personal);
+    $freshUser = $user->fresh();
+    $this->assertNotNull($freshUser);
+    resolve(SwitchTeam::class)->handle($freshUser, $personal);
 
-    expect($user->fresh()->current_team_id)->toBe($personal->id);
+    $freshUser = $user->fresh();
+    $this->assertNotNull($freshUser);
+    expect($freshUser->current_team_id)->toBe($personal->id);
 });
 
 it('throws when the user does not belong to the team', function (): void {

@@ -7,13 +7,15 @@ use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\ViewErrorBag;
+use Inertia\Testing\AssertableInertia;
 
 it('renders login page', function (): void {
     $response = $this->fromRoute('home')
         ->get(route('login'));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page) => $page
             ->component('session/create')
             ->has('canResetPassword')
             ->has('status'));
@@ -160,7 +162,10 @@ it('throttles login attempts after too many failures', function (): void {
         ->assertSessionHasErrors('email');
 
     $errors = session('errors');
-    expect($errors->get('email')[0])->toContain('Too many login attempts');
+    $this->assertInstanceOf(ViewErrorBag::class, $errors);
+    $messages = $errors->getBag('default')->get('email');
+    $this->assertNotEmpty($messages);
+    expect($messages[0])->toContain('Too many login attempts');
 });
 
 it('clears rate limit after successful login', function (): void {

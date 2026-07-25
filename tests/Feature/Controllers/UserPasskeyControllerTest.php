@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\User;
+use Inertia\Testing\AssertableInertia;
 
 it('renders passkeys page', function (): void {
     $user = User::factory()->create();
@@ -13,7 +14,7 @@ it('renders passkeys page', function (): void {
         ->get(route('passkeys.show'));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page) => $page
             ->component('user-passkey/show')
             ->where('canManagePasskeys', true)
             ->where('passkeys', []));
@@ -39,7 +40,7 @@ it('lists the passkeys of the user', function (): void {
         ->get(route('passkeys.show'));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page) => $page
             ->component('user-passkey/show')
             ->where('passkeys.0.id', $passkey->id)
             ->where('passkeys.0.name', 'MacBook Pro')

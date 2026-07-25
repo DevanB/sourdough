@@ -24,9 +24,11 @@ it('shares null user when guest', function (): void {
 
     $shared = $middleware->share($request);
 
-    expect($shared)->toHaveKey('auth')
-        ->and($shared['auth'])->toHaveKey('user')
-        ->and($shared['auth']['user'])->toBeNull();
+    $this->assertArrayHasKey('auth', $shared);
+    $this->assertIsArray($shared['auth']);
+    $this->assertArrayHasKey('user', $shared['auth']);
+
+    expect($shared['auth']['user'])->toBeNull();
 });
 
 it('shares authenticated user data', function (): void {
@@ -42,10 +44,15 @@ it('shares authenticated user data', function (): void {
 
     $shared = $middleware->share($request);
 
-    expect($shared['auth']['user'])->not->toBeNull()
-        ->and($shared['auth']['user']->id)->toBe($user->id)
-        ->and($shared['auth']['user']->name)->toBe('Test User')
-        ->and($shared['auth']['user']->email)->toBe('test@example.com');
+    $this->assertArrayHasKey('auth', $shared);
+    $this->assertIsArray($shared['auth']);
+    $this->assertArrayHasKey('user', $shared['auth']);
+    $sharedUser = $shared['auth']['user'];
+    $this->assertInstanceOf(User::class, $sharedUser);
+
+    expect($sharedUser->id)->toBe($user->id)
+        ->and($sharedUser->name)->toBe('Test User')
+        ->and($sharedUser->email)->toBe('test@example.com');
 });
 
 it('defaults sidebarOpen to true when no cookie', function (): void {

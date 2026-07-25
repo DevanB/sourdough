@@ -13,7 +13,10 @@ parameters:
         - database
         - public
         - routes
+        - tests
 
+    peststan:
+        testCaseClass: Tests\TestCase
 
     level: max
 

@@ -5,13 +5,14 @@ declare(strict_types=1);
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Notification;
+use Inertia\Testing\AssertableInertia;
 
 it('renders forgot password page', function (): void {
     $response = $this->fromRoute('home')
         ->get(route('password.request'));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page) => $page
             ->component('user-email-reset-notification/create')
             ->has('status'));
 });

@@ -12,6 +12,9 @@ it('may update a team', function (): void {
 
     $updated = resolve(UpdateTeam::class)->handle($team, 'Renamed');
 
+    $freshTeam = $team->fresh();
+    $this->assertNotNull($freshTeam);
+
     expect($updated->name)->toBe('Renamed')
-        ->and($team->fresh()->name)->toBe('Renamed');
+        ->and($freshTeam->name)->toBe('Renamed');
 });

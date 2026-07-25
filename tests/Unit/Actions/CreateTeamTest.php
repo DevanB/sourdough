@@ -11,9 +11,12 @@ it('may create a team', function (): void {
 
     $team = resolve(CreateTeam::class)->handle($user, 'Acme');
 
+    $freshUser = $user->fresh();
+    $this->assertNotNull($freshUser);
+
     expect($team->name)->toBe('Acme')
         ->and($team->is_personal)->toBeFalse()
-        ->and($user->fresh()->current_team_id)->toBe($team->id)
+        ->and($freshUser->current_team_id)->toBe($team->id)
         ->and($user->ownsTeam($team))->toBeTrue()
         ->and($user->teamRole($team))->toBe(TeamRole::Owner);
 });
@@ -23,6 +26,9 @@ it('may create a personal team', function (): void {
 
     $team = resolve(CreateTeam::class)->handle($user, $user->name."'s Team", isPersonal: true);
 
+    $freshUser = $user->fresh();
+    $this->assertNotNull($freshUser);
+
     expect($team->is_personal)->toBeTrue()
-        ->and($user->fresh()->personalTeam()?->is($team))->toBeTrue();
+        ->and($freshUser->personalTeam()?->is($team))->toBeTrue();
 });

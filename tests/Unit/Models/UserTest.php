@@ -9,6 +9,7 @@ use App\Models\User;
 
 test('to array', function (): void {
     $user = User::factory()->create()->fresh();
+    $this->assertNotNull($user);
 
     expect(array_keys($user->toArray()))
         ->toBe([
@@ -35,19 +36,23 @@ test('may have passkeys', function (): void {
     ]);
 
     expect($user->hasPasskeysEnabled())->toBeTrue()
-        ->and($user->passkeys()->count())->toBeOne();
+        ->and($user->passkeys()->count())->toBe(1);
 });
 
 it('belongs to teams', function (): void {
     $user = User::factory()->create();
 
+    $firstTeam = $user->teams->first();
+    $this->assertNotNull($firstTeam);
+
     expect($user->teams)->toHaveCount(1)
-        ->and($user->teams->first()->is_personal)->toBeTrue();
+        ->and($firstTeam->is_personal)->toBeTrue();
 });
 
 it('determines whether it belongs to a team', function (): void {
     $user = User::factory()->create();
     $team = $user->personalTeam();
+    $this->assertNotNull($team);
     $other = Team::factory()->create();
 
     expect($user->belongsToTeam($team))->toBeTrue()
@@ -99,13 +104,16 @@ it('checks team permissions', function (): void {
 it('resolves the personal team', function (): void {
     $user = User::factory()->create();
 
-    expect($user->personalTeam())->not->toBeNull()
-        ->and($user->personalTeam()->is_personal)->toBeTrue();
+    $personalTeam = $user->personalTeam();
+    $this->assertNotNull($personalTeam);
+
+    expect($personalTeam->is_personal)->toBeTrue();
 });
 
 it('resolves a fallback team excluding the given team', function (): void {
     $user = User::factory()->create();
     $personal = $user->personalTeam();
+    $this->assertNotNull($personal);
     $shared = resolve(CreateTeam::class)->handle($user, 'Acme');
 
     expect($user->fallbackTeam(excluding: $shared)?->is($personal))->toBeTrue()
@@ -115,6 +123,7 @@ it('resolves a fallback team excluding the given team', function (): void {
 it('maps a team to a user team dto', function (): void {
     $user = User::factory()->create();
     $team = $user->personalTeam();
+    $this->assertNotNull($team);
 
     $dto = $user->toUserTeam($team);
 
@@ -132,10 +141,14 @@ it('lists user teams ordered by name', function (): void {
     $acme = resolve(CreateTeam::class)->handle($user, 'Acme');
 
     $teams = $user->userTeams();
+    $first = $teams->first();
+    $last = $teams->last();
+    $this->assertNotNull($first);
+    $this->assertNotNull($last);
 
     expect($teams)->toHaveCount(2)
-        ->and($teams->first()->name)->toBe('Acme')
-        ->and($teams->first()->isCurrent)->toBeTrue()
-        ->and($teams->last()->name)->toBe('Zebra')
-        ->and($teams->last()->isCurrent)->toBeFalse();
+        ->and($first->name)->toBe('Acme')
+        ->and($first->isCurrent)->toBeTrue()
+        ->and($last->name)->toBe('Zebra')
+        ->and($last->isCurrent)->toBeFalse();
 });

@@ -8,13 +8,14 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
+use Inertia\Testing\AssertableInertia;
 
 it('renders registration page', function (): void {
     $response = $this->fromRoute('home')
         ->get(route('register'));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page->component('user/create'));
+        ->assertInertia(fn (AssertableInertia $page) => $page->component('user/create'));
 });
 
 it('may register a new user', function (): void {
@@ -31,14 +32,15 @@ it('may register a new user', function (): void {
     $response->assertRedirectToRoute('dashboard');
 
     $user = User::query()->where('email', 'test@example.com')->first();
+    $this->assertNotNull($user);
+    $personalTeam = $user->personalTeam();
+    $this->assertNotNull($personalTeam);
 
-    expect($user)->not->toBeNull()
-        ->and($user->name)->toBe('Test User')
+    expect($user->name)->toBe('Test User')
         ->and($user->email)->toBe('test@example.com')
         ->and(Hash::check('password1234', $user->password))->toBeTrue()
-        ->and($user->personalTeam())->not->toBeNull()
-        ->and($user->personalTeam()->is_personal)->toBeTrue()
-        ->and($user->personalTeam()->name)->toBe("Test User's Team");
+        ->and($personalTeam->is_personal)->toBeTrue()
+        ->and($personalTeam->name)->toBe("Test User's Team");
 
     $this->assertAuthenticatedAs($user);
 

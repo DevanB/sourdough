@@ -22,8 +22,13 @@ it('may accept a team invitation', function (): void {
 
     resolve(AcceptTeamInvitation::class)->handle($invitee, $invitation);
 
-    expect($invitee->fresh()->belongsToTeam($team))->toBeTrue()
-        ->and($invitee->teamRole($team))->toBe(TeamRole::Admin)
-        ->and($invitee->fresh()->current_team_id)->toBe($team->id)
-        ->and($invitation->fresh()->isAccepted())->toBeTrue();
+    $freshInvitee = $invitee->fresh();
+    $this->assertNotNull($freshInvitee);
+    $freshInvitation = $invitation->fresh();
+    $this->assertNotNull($freshInvitation);
+
+    expect($freshInvitee->belongsToTeam($team))->toBeTrue()
+        ->and($freshInvitee->teamRole($team))->toBe(TeamRole::Admin)
+        ->and($freshInvitee->current_team_id)->toBe($team->id)
+        ->and($freshInvitation->isAccepted())->toBeTrue();
 });

@@ -69,6 +69,7 @@ it('allows owners and admins to invite and cancel invitations', function (): voi
 it('prevents deleting personal teams and allows owners to delete shared teams', function (): void {
     $owner = User::factory()->create();
     $personalTeam = $owner->personalTeam();
+    $this->assertNotNull($personalTeam);
     $sharedTeam = resolve(CreateTeam::class)->handle($owner, 'Acme');
 
     $policy = new TeamPolicy;

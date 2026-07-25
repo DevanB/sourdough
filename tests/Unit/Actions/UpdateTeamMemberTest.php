@@ -19,5 +19,7 @@ it('may update a team member role', function (): void {
 
     resolve(UpdateTeamMember::class)->handle($team, $member, TeamRole::Admin);
 
-    expect($member->fresh()->teamRole($team))->toBe(TeamRole::Admin);
+    $freshMember = $member->fresh();
+    $this->assertNotNull($freshMember);
+    expect($freshMember->teamRole($team))->toBe(TeamRole::Admin);
 });
