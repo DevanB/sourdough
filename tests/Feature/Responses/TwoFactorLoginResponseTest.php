@@ -18,8 +18,9 @@ it('returns an empty json response', function (): void {
 
     $response = resolve(TwoFactorLoginResponse::class)->toResponse($request);
 
-    expect($response)->toBeInstanceOf(JsonResponse::class)
-        ->and($response->getStatusCode())->toBe(204);
+    expect($response)->toBeInstanceOf(JsonResponse::class);
+    $this->assertInstanceOf(JsonResponse::class, $response);
+    expect($response->getStatusCode())->toBe(204);
 });
 
 it('redirects to the dashboard', function (): void {
@@ -30,8 +31,9 @@ it('redirects to the dashboard', function (): void {
 
     $response = resolve(TwoFactorLoginResponse::class)->toResponse($request);
 
-    expect($response)->toBeInstanceOf(RedirectResponse::class)
-        ->and($response->getTargetUrl())->toBe(url(route('dashboard', absolute: false)));
+    expect($response)->toBeInstanceOf(RedirectResponse::class);
+    $this->assertInstanceOf(RedirectResponse::class, $response);
+    expect($response->getTargetUrl())->toBe(url(route('dashboard', absolute: false)));
 });
 
 it('redirects to team select when the user has multiple teams', function (): void {
@@ -43,8 +45,9 @@ it('redirects to team select when the user has multiple teams', function (): voi
 
     $response = resolve(TwoFactorLoginResponse::class)->toResponse($request);
 
-    expect($response)->toBeInstanceOf(RedirectResponse::class)
-        ->and($response->getTargetUrl())->toBe(url(route('team-select.show', absolute: false)));
+    expect($response)->toBeInstanceOf(RedirectResponse::class);
+    $this->assertInstanceOf(RedirectResponse::class, $response);
+    expect($response->getTargetUrl())->toBe(url(route('team-select.show', absolute: false)));
 });
 
 it('falls back to the dashboard when no user is authenticated', function (): void {
@@ -52,6 +55,7 @@ it('falls back to the dashboard when no user is authenticated', function (): voi
 
     $response = resolve(TwoFactorLoginResponse::class)->toResponse($request);
 
-    expect($response)->toBeInstanceOf(RedirectResponse::class)
-        ->and($response->getTargetUrl())->toBe(url(route('dashboard', absolute: false)));
+    expect($response)->toBeInstanceOf(RedirectResponse::class);
+    $this->assertInstanceOf(RedirectResponse::class, $response);
+    expect($response->getTargetUrl())->toBe(url(route('dashboard', absolute: false)));
 });

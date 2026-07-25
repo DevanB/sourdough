@@ -18,10 +18,11 @@ it('returns a json redirect payload', function (): void {
 
     $response = resolve(PasskeyLoginResponse::class)->toResponse($request);
 
-    expect($response)->toBeInstanceOf(JsonResponse::class)
-        ->and($response->getData(true))->toBe([
-            'redirect' => url(route('dashboard', absolute: false)),
-        ]);
+    expect($response)->toBeInstanceOf(JsonResponse::class);
+    $this->assertInstanceOf(JsonResponse::class, $response);
+    expect($response->getData(true))->toBe([
+        'redirect' => url(route('dashboard', absolute: false)),
+    ]);
 });
 
 it('targets team select when the user has multiple teams', function (): void {
@@ -34,10 +35,11 @@ it('targets team select when the user has multiple teams', function (): void {
 
     $response = resolve(PasskeyLoginResponse::class)->toResponse($request);
 
-    expect($response)->toBeInstanceOf(JsonResponse::class)
-        ->and($response->getData(true))->toBe([
-            'redirect' => url(route('team-select.show', absolute: false)),
-        ]);
+    expect($response)->toBeInstanceOf(JsonResponse::class);
+    $this->assertInstanceOf(JsonResponse::class, $response);
+    expect($response->getData(true))->toBe([
+        'redirect' => url(route('team-select.show', absolute: false)),
+    ]);
 });
 
 it('redirects when the request does not want json', function (): void {
@@ -48,8 +50,9 @@ it('redirects when the request does not want json', function (): void {
 
     $response = resolve(PasskeyLoginResponse::class)->toResponse($request);
 
-    expect($response)->toBeInstanceOf(RedirectResponse::class)
-        ->and($response->getTargetUrl())->toBe(url(route('dashboard', absolute: false)));
+    expect($response)->toBeInstanceOf(RedirectResponse::class);
+    $this->assertInstanceOf(RedirectResponse::class, $response);
+    expect($response->getTargetUrl())->toBe(url(route('dashboard', absolute: false)));
 });
 
 it('falls back to the dashboard when no user is authenticated', function (): void {
@@ -58,8 +61,9 @@ it('falls back to the dashboard when no user is authenticated', function (): voi
 
     $response = resolve(PasskeyLoginResponse::class)->toResponse($request);
 
-    expect($response)->toBeInstanceOf(JsonResponse::class)
-        ->and($response->getData(true))->toBe([
-            'redirect' => url(route('dashboard', absolute: false)),
-        ]);
+    expect($response)->toBeInstanceOf(JsonResponse::class);
+    $this->assertInstanceOf(JsonResponse::class, $response);
+    expect($response->getData(true))->toBe([
+        'redirect' => url(route('dashboard', absolute: false)),
+    ]);
 });

@@ -12,6 +12,7 @@ it('may remove a team member', function (): void {
     $team = resolve(CreateTeam::class)->handle($owner, 'Acme');
     $member = User::factory()->create();
     $personal = $member->personalTeam();
+    $this->assertNotNull($personal);
 
     $team->memberships()->create([
         'user_id' => $member->id,
@@ -22,8 +23,11 @@ it('may remove a team member', function (): void {
 
     resolve(RemoveTeamMember::class)->handle($team, $member);
 
-    expect($member->fresh()->belongsToTeam($team))->toBeFalse()
-        ->and($member->fresh()->current_team_id)->toBe($personal->id);
+    $freshMember = $member->fresh();
+    $this->assertNotNull($freshMember);
+
+    expect($freshMember->belongsToTeam($team))->toBeFalse()
+        ->and($freshMember->current_team_id)->toBe($personal->id);
 });
 
 it('does not change current team when removing a member not on that team', function (): void {
@@ -31,15 +35,20 @@ it('does not change current team when removing a member not on that team', funct
     $team = resolve(CreateTeam::class)->handle($owner, 'Acme');
     $member = User::factory()->create();
     $personal = $member->personalTeam();
+    $this->assertNotNull($personal);
 
     $team->memberships()->create([
         'user_id' => $member->id,
         'role' => TeamRole::Member,
     ]);
 
-    expect($member->fresh()->current_team_id)->toBe($personal->id);
+    $freshMember = $member->fresh();
+    $this->assertNotNull($freshMember);
+    expect($freshMember->current_team_id)->toBe($personal->id);
 
     resolve(RemoveTeamMember::class)->handle($team, $member);
 
-    expect($member->fresh()->current_team_id)->toBe($personal->id);
+    $freshMember = $member->fresh();
+    $this->assertNotNull($freshMember);
+    expect($freshMember->current_team_id)->toBe($personal->id);
 });

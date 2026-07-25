@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Actions\CreateTeam;
 use App\Models\User;
+use Inertia\Testing\AssertableInertia;
 
 it('renders team selection when the user has multiple teams', function (): void {
     $user = User::factory()->create();
@@ -14,7 +15,7 @@ it('renders team selection when the user has multiple teams', function (): void 
         ->get(route('team-select.show'));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('team-select/show')
             ->has('teams', 2));
 });

@@ -6,6 +6,7 @@ use App\Actions\CreateTeam;
 use App\Models\TeamInvitation;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Inertia\Testing\AssertableInertia;
 
 beforeEach(function (): void {
     config(['features.teams' => false]);
@@ -65,7 +66,7 @@ it('shares the disabled feature state without team data', function (): void {
         ->get(route('dashboard'));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->where('features.teams', false)
             ->where('currentTeam', null)
             ->has('teams', 0));

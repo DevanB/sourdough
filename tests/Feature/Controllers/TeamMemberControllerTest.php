@@ -31,7 +31,9 @@ it('may update a member role', function (): void {
             ],
         ]);
 
-    expect($member->fresh()->teamRole($team))->toBe(TeamRole::Admin);
+    $freshMember = $member->fresh();
+    $this->assertNotNull($freshMember);
+    expect($freshMember->teamRole($team))->toBe(TeamRole::Admin);
 });
 
 it('forbids updating the owner role', function (): void {
@@ -69,7 +71,9 @@ it('may remove a team member', function (): void {
             ],
         ]);
 
-    expect($member->fresh()->belongsToTeam($team))->toBeFalse();
+    $freshMember = $member->fresh();
+    $this->assertNotNull($freshMember);
+    expect($freshMember->belongsToTeam($team))->toBeFalse();
 });
 
 it('allows a member to leave the team', function (): void {
@@ -94,7 +98,9 @@ it('allows a member to leave the team', function (): void {
             ],
         ]);
 
-    expect($member->fresh()->belongsToTeam($team))->toBeFalse();
+    $freshMember = $member->fresh();
+    $this->assertNotNull($freshMember);
+    expect($freshMember->belongsToTeam($team))->toBeFalse();
 });
 
 it('forbids the owner from leaving the team', function (): void {

@@ -26,9 +26,12 @@ it('has memberships', function (): void {
     $owner = User::factory()->create();
     $team = resolve(CreateTeam::class)->handle($owner, 'Acme');
 
+    $membership = $team->memberships->first();
+    $this->assertNotNull($membership);
+
     expect($team->memberships)->toHaveCount(1)
-        ->and($team->memberships->first()->role)->toBe(TeamRole::Owner)
-        ->and($team->memberships->first()->user_id)->toBe($owner->id);
+        ->and($membership->role)->toBe(TeamRole::Owner)
+        ->and($membership->user_id)->toBe($owner->id);
 });
 
 it('has invitations', function (): void {
@@ -40,8 +43,11 @@ it('has invitations', function (): void {
         'invited_by' => $owner->id,
     ]);
 
+    $firstInvitation = $team->invitations->first();
+    $this->assertNotNull($firstInvitation);
+
     expect($team->invitations)->toHaveCount(1)
-        ->and($team->invitations->first()->is($invitation))->toBeTrue();
+        ->and($firstInvitation->is($invitation))->toBeTrue();
 });
 
 it('resolves the owner', function (): void {

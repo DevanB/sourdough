@@ -3,14 +3,18 @@
 declare(strict_types=1);
 
 use App\Rules\ValidEmail;
+use Illuminate\Contracts\Translation\Translator;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 it('works with valid email', function (string $email): void {
     $rule = new ValidEmail;
 
     $failed = false;
 
-    $rule->validate('email', $email, function () use (&$failed): void {
+    $rule->validate('email', $email, function (string $attribute, ?string $message = null) use (&$failed): PotentiallyTranslatedString {
         $failed = true;
+
+        return new PotentiallyTranslatedString($message ?? $attribute, resolve(Translator::class));
     });
 
     expect($failed)->toBeFalse();
@@ -71,8 +75,10 @@ it('fails with invalid email', function (string $email): void {
 
     $failed = false;
 
-    $rule->validate('email', $email, function () use (&$failed): void {
+    $rule->validate('email', $email, function (string $attribute, ?string $message = null) use (&$failed): PotentiallyTranslatedString {
         $failed = true;
+
+        return new PotentiallyTranslatedString($message ?? $attribute, resolve(Translator::class));
     });
 
     expect($failed)->toBeTrue();

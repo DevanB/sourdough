@@ -8,6 +8,7 @@ use App\Models\TeamInvitation;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Support\SessionKey;
+use Inertia\Testing\AssertableInertia;
 
 it('redirects guests to login with the invitation as the intended url', function (): void {
     $owner = User::factory()->create();
@@ -56,7 +57,7 @@ it('renders the invitation page', function (): void {
         ->get(route('team-invitations.show', $invitation->code));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('team-invitations/show')
             ->where('invitation.email', 'invitee@example.com')
             ->where('invitation.emailMatches', true)
@@ -80,7 +81,7 @@ it('flags email mismatches on the invitation page', function (): void {
         ->get(route('team-invitations.show', $invitation->code));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->where('invitation.emailMatches', false));
 });
 
@@ -100,7 +101,7 @@ it('flags expired invitations', function (): void {
         ->get(route('team-invitations.show', $invitation->code));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->where('invitation.isExpired', true)
             ->where('invitation.isPending', false));
 });
@@ -129,10 +130,15 @@ it('may accept an invitation', function (): void {
             ],
         ]);
 
-    expect($invitee->fresh()->belongsToTeam($team))->toBeTrue()
-        ->and($invitee->teamRole($team))->toBe(TeamRole::Admin)
-        ->and($invitee->fresh()->current_team_id)->toBe($team->id)
-        ->and($invitation->fresh()->isAccepted())->toBeTrue();
+    $freshInvitee = $invitee->fresh();
+    $this->assertNotNull($freshInvitee);
+    $freshInvitation = $invitation->fresh();
+    $this->assertNotNull($freshInvitation);
+
+    expect($freshInvitee->belongsToTeam($team))->toBeTrue()
+        ->and($freshInvitee->teamRole($team))->toBe(TeamRole::Admin)
+        ->and($freshInvitee->current_team_id)->toBe($team->id)
+        ->and($freshInvitation->isAccepted())->toBeTrue();
 });
 
 it('forbids accepting when the email does not match', function (): void {

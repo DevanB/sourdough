@@ -14,6 +14,7 @@ it('may create a team invitation and notify the recipient', function (): void {
 
     $owner = User::factory()->create();
     $team = $owner->personalTeam();
+    $this->assertNotNull($team);
 
     $invitation = resolve(CreateTeamInvitation::class)->handle(
         $team,
@@ -22,8 +23,7 @@ it('may create a team invitation and notify the recipient', function (): void {
         TeamRole::Member,
     );
 
-    expect($invitation)->toBeInstanceOf(TeamInvitation::class)
-        ->and($invitation->email)->toBe('invitee@example.com')
+    expect($invitation->email)->toBe('invitee@example.com')
         ->and($invitation->role)->toBe(TeamRole::Member)
         ->and($invitation->team_id)->toBe($team->id)
         ->and($invitation->invited_by)->toBe($owner->id)

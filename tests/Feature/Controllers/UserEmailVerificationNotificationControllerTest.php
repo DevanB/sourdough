@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\User;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Notification;
+use Inertia\Testing\AssertableInertia;
 
 it('renders verify email page', function (): void {
     $user = User::factory()->create([
@@ -16,7 +17,7 @@ it('renders verify email page', function (): void {
         ->get(route('verification.notice'));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('user-email-verification-notification/create')
             ->has('status'));
 });

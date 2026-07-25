@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\User;
 use Inertia\Support\SessionKey;
+use Inertia\Testing\AssertableInertia;
 
 it('renders profile edit page', function (): void {
     $user = User::factory()->create();
@@ -13,7 +14,7 @@ it('renders profile edit page', function (): void {
         ->get(route('user-profile.edit'));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('user-profile/edit')
             ->has('status'));
 });

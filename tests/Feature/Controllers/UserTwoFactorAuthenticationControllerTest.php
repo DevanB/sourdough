@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\User;
+use Inertia\Testing\AssertableInertia;
 
 it('renders two factor authentication page', function (): void {
     $user = User::factory()->create();
@@ -13,7 +14,7 @@ it('renders two factor authentication page', function (): void {
         ->get(route('two-factor.show'));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('user-two-factor-authentication/show')
             ->has('twoFactorEnabled'));
 });
@@ -27,7 +28,7 @@ it('shows two factor disabled when not enabled', function (): void {
         ->get(route('two-factor.show'));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('user-two-factor-authentication/show')
             ->where('twoFactorEnabled', false));
 });
@@ -45,7 +46,7 @@ it('shows two factor enabled when enabled', function (): void {
         ->get(route('two-factor.show'));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('user-two-factor-authentication/show')
             ->where('twoFactorEnabled', true));
 });

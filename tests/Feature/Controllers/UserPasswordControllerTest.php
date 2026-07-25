@@ -8,13 +8,14 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Inertia\Support\SessionKey;
+use Inertia\Testing\AssertableInertia;
 
 it('renders reset password page', function (): void {
     $response = $this->fromRoute('home')
         ->get(route('password.reset', ['token' => 'fake-token']));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('user-password/create')
             ->has('email')
             ->has('token'));
@@ -131,7 +132,7 @@ it('renders edit password page', function (): void {
         ->get(route('password.edit'));
 
     $response->assertOk()
-        ->assertInertia(fn ($page) => $page->component('user-password/edit'));
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page->component('user-password/edit'));
 });
 
 it('may update password', function (): void {

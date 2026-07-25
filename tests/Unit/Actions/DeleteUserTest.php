@@ -9,6 +9,7 @@ use App\Models\User;
 it('may delete a user', function (): void {
     $user = User::factory()->create();
     $personalTeam = $user->personalTeam();
+    $this->assertNotNull($personalTeam);
 
     $action = resolve(DeleteUser::class);
 
