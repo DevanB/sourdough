@@ -27,6 +27,7 @@ const fetchJson = async <T>(url: string): Promise<T> => {
         throw new Error(`Failed to fetch: ${response.status}`);
     }
 
+    // oxlint-disable-next-line typescript/no-unsafe-return -- `Response.json()` is typed `any` by the DOM lib, and this is the single JSON boundary in the hook; callers declare the expected shape.
     return await response.json();
 };
 
