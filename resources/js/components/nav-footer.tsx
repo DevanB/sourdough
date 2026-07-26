@@ -19,7 +19,7 @@ export function NavFooter({
     return (
         <SidebarGroup
             {...props}
-            className={`group-data-[collapsible=icon]:p-0 ${className || ''}`}
+            className={`group-data-[collapsible=icon]:p-0 ${className ?? ''}`}
         >
             <SidebarGroupContent>
                 <SidebarMenu>

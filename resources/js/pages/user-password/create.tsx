@@ -8,10 +8,10 @@ import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/auth-layout';
 import { update } from '@/routes/password';
 
-type Props = {
+interface Props {
     token: string;
     email: string;
-};
+}
 
 export default function ResetPassword({ token, email }: Props) {
     return (
@@ -23,7 +23,7 @@ export default function ResetPassword({ token, email }: Props) {
 
             <Form
                 {...update.form()}
-                transform={(data) => ({ ...data, token, email })}
+                transform={(data) => ({ ...data, email, token })}
                 resetOnSuccess={['password', 'password_confirmation']}
             >
                 {({ processing, errors }) => (

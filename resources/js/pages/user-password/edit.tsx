@@ -13,8 +13,8 @@ import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Password settings',
         href: edit().url,
+        title: 'Password settings',
     },
 ];
 

@@ -15,38 +15,38 @@ import type { NavItem } from '@/types';
 
 const getSidebarNavItems = (teamsEnabled: boolean): NavItem[] => [
     {
-        title: 'Profile',
         href: edit(),
         icon: null,
+        title: 'Profile',
     },
     {
-        title: 'Password',
         href: editPassword(),
         icon: null,
+        title: 'Password',
     },
     {
-        title: 'Two-Factor Auth',
         href: showTwoFactor(),
         icon: null,
+        title: 'Two-Factor Auth',
     },
     {
-        title: 'Passkeys',
         href: showPasskeys(),
         icon: null,
+        title: 'Passkeys',
     },
     ...(teamsEnabled
         ? [
               {
-                  title: 'Teams',
                   href: teamsIndex(),
                   icon: null,
+                  title: 'Teams',
               },
           ]
         : []),
     {
-        title: 'Appearance',
         href: editAppearance(),
         icon: null,
+        title: 'Appearance',
     },
 ];
 

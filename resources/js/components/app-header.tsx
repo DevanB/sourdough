@@ -36,28 +36,28 @@ import { cn, toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
 
-type Props = {
+interface Props {
     breadcrumbs?: BreadcrumbItem[];
-};
+}
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+        title: 'Dashboard',
     },
 ];
 
 const rightNavItems: NavItem[] = [
     {
-        title: 'Repository',
         href: 'https://github.com/laravel/react-starter-kit',
         icon: Folder,
+        title: 'Repository',
     },
     {
-        title: 'Documentation',
         href: 'https://laravel.com/docs/starter-kits#react',
         icon: BookOpen,
+        title: 'Documentation',
     },
 ];
 
@@ -69,6 +69,10 @@ export function AppHeader({ breadcrumbs = EMPTY_BREADCRUMBS }: Props) {
     const { auth } = page.props;
     const getInitials = useInitials();
     const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
+
+    if (auth.user === null) {
+        return null;
+    }
 
     return (
         <>
@@ -169,7 +173,7 @@ export function AppHeader({ breadcrumbs = EMPTY_BREADCRUMBS }: Props) {
                                             {item.title}
                                         </Link>
                                         {isCurrentUrl(item.href) && (
-                                            <div className="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-black dark:bg-white"></div>
+                                            <div className="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-black dark:bg-white" />
                                         )}
                                     </NavigationMenuItem>
                                 ))}

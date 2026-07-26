@@ -11,16 +11,16 @@ import SettingsLayout from '@/layouts/settings/layout';
 import { disable, enable, show } from '@/routes/two-factor';
 import type { BreadcrumbItem } from '@/types';
 
-type Props = {
+interface Props {
     canManageTwoFactor?: boolean;
     requiresConfirmation?: boolean;
     twoFactorEnabled?: boolean;
-};
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Two-Factor Authentication',
         href: show(),
+        title: 'Two-Factor Authentication',
     },
 ];
 
@@ -93,9 +93,9 @@ export default function TwoFactor({
                                 <div>
                                     {hasSetupData ? (
                                         <Button
-                                            onClick={() =>
-                                                setShowSetupModal(true)
-                                            }
+                                            onClick={() => {
+                                                setShowSetupModal(true);
+                                            }}
                                         >
                                             <ShieldCheck />
                                             Continue setup
@@ -103,9 +103,9 @@ export default function TwoFactor({
                                     ) : (
                                         <Form
                                             {...enable.form()}
-                                            onSuccess={() =>
-                                                setShowSetupModal(true)
-                                            }
+                                            onSuccess={() => {
+                                                setShowSetupModal(true);
+                                            }}
                                         >
                                             {({ processing }) => (
                                                 <Button
@@ -123,7 +123,9 @@ export default function TwoFactor({
 
                         <TwoFactorSetupModal
                             isOpen={showSetupModal}
-                            onClose={() => setShowSetupModal(false)}
+                            onClose={() => {
+                                setShowSetupModal(false);
+                            }}
                             requiresConfirmation={requiresConfirmation}
                             twoFactorEnabled={twoFactorEnabled}
                             qrCodeSvg={qrCodeSvg}

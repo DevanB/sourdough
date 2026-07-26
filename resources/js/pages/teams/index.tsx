@@ -26,8 +26,8 @@ import type { UserTeam } from '@/types/teams';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Teams',
         href: index(),
+        title: 'Teams',
     },
 ];
 
@@ -60,7 +60,9 @@ export default function TeamsIndex({ teams }: { teams: UserTeam[] }) {
                                     key={String(open)}
                                     {...TeamController.store.form()}
                                     className="space-y-6"
-                                    onSuccess={() => setOpen(false)}
+                                    onSuccess={() => {
+                                        setOpen(false);
+                                    }}
                                 >
                                     {({ errors, processing }) => (
                                         <>

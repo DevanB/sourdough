@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 
-type InvitationProp = {
+interface InvitationProp {
     code: string;
     email: string;
     role: string;
@@ -16,7 +16,7 @@ type InvitationProp = {
     isExpired: boolean;
     isAccepted: boolean;
     emailMatches: boolean;
-};
+}
 
 export default function TeamInvitationShow({
     invitation,

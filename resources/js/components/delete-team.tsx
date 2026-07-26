@@ -89,9 +89,9 @@ export default function DeleteTeam({
                                         <DialogClose asChild>
                                             <Button
                                                 variant="secondary"
-                                                onClick={() =>
-                                                    resetAndClearErrors()
-                                                }
+                                                onClick={() => {
+                                                    resetAndClearErrors();
+                                                }}
                                             >
                                                 Cancel
                                             </Button>

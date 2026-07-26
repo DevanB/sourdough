@@ -53,7 +53,9 @@ export function TeamSwitcher() {
                         key={team.id}
                         data-test="team-switcher-item"
                         className="cursor-pointer gap-2 p-2"
-                        onSelect={() => switchTeam(team)}
+                        onSelect={() => {
+                            switchTeam(team);
+                        }}
                     >
                         {team.name}
                         {currentTeam?.id === team.id ? (

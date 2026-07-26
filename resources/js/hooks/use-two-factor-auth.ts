@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { qrCode, recoveryCodes, secretKey } from '@/routes/two-factor';
 import type { TwoFactorSecretKey, TwoFactorSetupData } from '@/types';
 
-export type UseTwoFactorAuthReturn = {
+export interface UseTwoFactorAuthReturn {
     qrCodeSvg: string | null;
     manualSetupKey: string | null;
     recoveryCodesList: string[];
@@ -14,7 +14,7 @@ export type UseTwoFactorAuthReturn = {
     fetchSetupKey: () => Promise<void>;
     fetchSetupData: () => Promise<void>;
     fetchRecoveryCodes: () => Promise<void>;
-};
+}
 
 export const OTP_MAX_LENGTH = 6;
 
@@ -27,7 +27,7 @@ const fetchJson = async <T>(url: string): Promise<T> => {
         throw new Error(`Failed to fetch: ${response.status}`);
     }
 
-    return response.json();
+    return await response.json();
 };
 
 export const useTwoFactorAuth = (): UseTwoFactorAuthReturn => {
@@ -92,16 +92,16 @@ export const useTwoFactorAuth = (): UseTwoFactorAuthReturn => {
     };
 
     return {
-        qrCodeSvg,
-        manualSetupKey,
-        recoveryCodesList,
-        hasSetupData,
-        errors,
         clearErrors,
         clearSetupData,
+        errors,
         fetchQrCode,
-        fetchSetupKey,
-        fetchSetupData,
         fetchRecoveryCodes,
+        fetchSetupData,
+        fetchSetupKey,
+        hasSetupData,
+        manualSetupKey,
+        qrCodeSvg,
+        recoveryCodesList,
     };
 };

@@ -88,9 +88,9 @@ export default function DeleteUser() {
                                         <DialogClose asChild>
                                             <Button
                                                 variant="secondary"
-                                                onClick={() =>
-                                                    resetAndClearErrors()
-                                                }
+                                                onClick={() => {
+                                                    resetAndClearErrors();
+                                                }}
                                             >
                                                 Cancel
                                             </Button>
