@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import { dashboard } from '@/routes';
 
-type Props = {
+interface Props {
     routes?: {
         options: UrlMethodPair;
         submit: UrlMethodPair;
@@ -16,7 +16,7 @@ type Props = {
     label?: string;
     loadingLabel?: string;
     separator?: string;
-};
+}
 
 export default function PasskeyVerify({
     routes,
@@ -47,7 +47,9 @@ export default function PasskeyVerify({
                     type="button"
                     variant="outline"
                     className="w-full"
-                    onClick={verify}
+                    onClick={() => {
+                        void verify();
+                    }}
                     disabled={isLoading}
                 >
                     {isLoading ? <Spinner /> : <KeyRound className="h-4 w-4" />}
@@ -55,7 +57,7 @@ export default function PasskeyVerify({
                         ? (loadingLabel ?? 'Authenticating...')
                         : (label ?? 'Sign in with a passkey')}
                 </Button>
-                {error && (
+                {error !== null && error !== '' && (
                     <InputError message={error} className="text-center" />
                 )}
             </div>

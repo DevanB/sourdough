@@ -1,15 +1,15 @@
 export type TeamRole = 'owner' | 'admin' | 'member';
 
-export type UserTeam = {
+export interface UserTeam {
     id: string;
     name: string;
     isPersonal: boolean;
     role: TeamRole | null;
     roleLabel: string | null;
     isCurrent: boolean;
-};
+}
 
-export type TeamPermissions = {
+export interface TeamPermissions {
     canUpdateTeam: boolean;
     canDeleteTeam: boolean;
     canAddMember: boolean;
@@ -17,9 +17,9 @@ export type TeamPermissions = {
     canRemoveMember: boolean;
     canCreateInvitation: boolean;
     canCancelInvitation: boolean;
-};
+}
 
-export type TeamMemberItem = {
+export interface TeamMemberItem {
     id: string;
     name: string;
     email: string;
@@ -27,17 +27,17 @@ export type TeamMemberItem = {
     roleLabel: string;
     isOwner: boolean;
     isSelf: boolean;
-};
+}
 
-export type PendingInvitation = {
+export interface PendingInvitation {
     id: string;
     email: string;
     role: TeamRole;
     roleLabel: string;
     createdAt: string | null;
-};
+}
 
-export type AssignableRole = {
+export interface AssignableRole {
     value: Exclude<TeamRole, 'owner'>;
     label: string;
-};
+}

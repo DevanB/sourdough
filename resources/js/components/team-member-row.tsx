@@ -53,8 +53,8 @@ export function TeamMemberRow({
                             router.visit(
                                 updateMember.url([teamId, member.id]),
                                 {
-                                    method: 'patch',
                                     data: { role: event.target.value },
+                                    method: 'patch',
                                     preserveScroll: true,
                                 },
                             );

@@ -12,17 +12,19 @@ import {
 } from '@/components/ui/dialog';
 import type { Passkey } from '@/types/auth';
 
-type Props = {
+interface Props {
     passkey: Passkey;
     onDelete: (id: number, onError: () => void) => void;
-};
+}
 
 export default function PasskeyItem({ passkey, onDelete }: Props) {
     const [isDeleting, setIsDeleting] = useState(false);
 
     const handleDelete = () => {
         setIsDeleting(true);
-        onDelete(passkey.id, () => setIsDeleting(false));
+        onDelete(passkey.id, () => {
+            setIsDeleting(false);
+        });
     };
 
     return (
@@ -36,22 +38,24 @@ export default function PasskeyItem({ passkey, onDelete }: Props) {
                         <p className="font-medium tracking-tight">
                             {passkey.name}
                         </p>
-                        {passkey.authenticator && (
-                            <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium tracking-wide text-muted-foreground uppercase ring-1 ring-border ring-inset">
-                                {passkey.authenticator}
-                            </span>
-                        )}
+                        {passkey.authenticator !== null &&
+                            passkey.authenticator !== '' && (
+                                <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium tracking-wide text-muted-foreground uppercase ring-1 ring-border ring-inset">
+                                    {passkey.authenticator}
+                                </span>
+                            )}
                     </div>
                     <p className="text-sm text-muted-foreground">
                         Added {passkey.created_at_diff}
-                        {passkey.last_used_at_diff && (
-                            <>
-                                <span className="mx-1 text-muted-foreground/50">
-                                    /
-                                </span>
-                                Last used {passkey.last_used_at_diff}
-                            </>
-                        )}
+                        {passkey.last_used_at_diff !== null &&
+                            passkey.last_used_at_diff !== '' && (
+                                <>
+                                    <span className="mx-1 text-muted-foreground/50">
+                                        /
+                                    </span>
+                                    Last used {passkey.last_used_at_diff}
+                                </>
+                            )}
                     </p>
                 </div>
             </div>
@@ -70,9 +74,9 @@ export default function PasskeyItem({ passkey, onDelete }: Props) {
                 <DialogContent>
                     <DialogTitle>Remove passkey</DialogTitle>
                     <DialogDescription>
-                        Are you sure you want to remove the "{passkey.name}"
-                        passkey? You will no longer be able to use it to sign
-                        in.
+                        Are you sure you want to remove the &quot;
+                        {passkey.name}&quot; passkey? You will no longer be able
+                        to use it to sign in.
                     </DialogDescription>
                     <DialogFooter className="gap-2">
                         <DialogClose asChild>

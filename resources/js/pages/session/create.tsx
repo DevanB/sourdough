@@ -13,11 +13,11 @@ import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 
-type Props = {
+interface Props {
     status?: string;
     canResetPassword: boolean;
     canRegister: boolean;
-};
+}
 
 export default function Login({
     status,
@@ -95,7 +95,7 @@ export default function Login({
 
                         {canRegister && (
                             <div className="text-center text-sm text-muted-foreground">
-                                Don't have an account?{' '}
+                                Don&apos;t have an account?{' '}
                                 <TextLink href={register()}>Sign up</TextLink>
                             </div>
                         )}
@@ -103,7 +103,7 @@ export default function Login({
                 )}
             </Form>
 
-            {status && (
+            {status !== undefined && status !== '' && (
                 <div className="mb-4 text-center text-sm font-medium text-green-600">
                     {status}
                 </div>

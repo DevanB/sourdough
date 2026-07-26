@@ -7,15 +7,12 @@ const mql =
         ? undefined
         : window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
 
+// oxlint-disable-next-line promise/prefer-await-to-callbacks -- `useSyncExternalStore` requires a callback-based subscribe function.
 function mediaQueryListener(callback: (event: MediaQueryListEvent) => void) {
-    if (!mql) {
-        return () => {};
-    }
-
-    mql.addEventListener('change', callback);
+    mql?.addEventListener('change', callback);
 
     return () => {
-        mql.removeEventListener('change', callback);
+        mql?.removeEventListener('change', callback);
     };
 }
 

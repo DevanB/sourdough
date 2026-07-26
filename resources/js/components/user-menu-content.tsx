@@ -12,9 +12,9 @@ import { logout } from '@/routes';
 import { edit } from '@/routes/user-profile';
 import type { User } from '@/types';
 
-type Props = {
+interface Props {
     user: User;
-};
+}
 
 export function UserMenuContent({ user }: Props) {
     const cleanup = useMobileNavigation();

@@ -20,17 +20,17 @@ function getAuthConfigContent(showRecoveryInput: boolean): {
 } {
     if (showRecoveryInput) {
         return {
-            title: 'Recovery code',
             description:
                 'Please confirm access to your account by entering one of your emergency recovery codes.',
+            title: 'Recovery code',
             toggleText: 'login using an authentication code',
         };
     }
 
     return {
-        title: 'Authentication code',
         description:
             'Enter the authentication code provided by your authenticator application.',
+        title: 'Authentication code',
         toggleText: 'login using a recovery code',
     };
 }
@@ -83,7 +83,9 @@ export default function Show() {
                                             name="code"
                                             maxLength={OTP_MAX_LENGTH}
                                             value={code}
-                                            onChange={(value) => setCode(value)}
+                                            onChange={(value) => {
+                                                setCode(value);
+                                            }}
                                             disabled={processing}
                                             pattern={REGEXP_ONLY_DIGITS}
                                         >
@@ -117,9 +119,9 @@ export default function Show() {
                                 <button
                                     type="button"
                                     className="cursor-pointer text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
-                                    onClick={() =>
-                                        toggleRecoveryMode(clearErrors)
-                                    }
+                                    onClick={() => {
+                                        toggleRecoveryMode(clearErrors);
+                                    }}
                                 >
                                     {authConfigContent.toggleText}
                                 </button>

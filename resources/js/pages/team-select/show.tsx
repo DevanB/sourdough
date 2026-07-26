@@ -29,7 +29,9 @@ export default function TeamSelectShow({ teams }: { teams: UserTeam[] }) {
                             variant="outline"
                             data-test="team-select-item"
                             className="h-auto w-full justify-between p-4"
-                            onClick={() => selectTeam(team)}
+                            onClick={() => {
+                                selectTeam(team);
+                            }}
                         >
                             <div className="flex flex-col items-start gap-1">
                                 <div className="flex items-center gap-2">

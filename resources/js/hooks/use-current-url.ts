@@ -17,28 +17,28 @@ export type WhenCurrentUrlFn = <TIfTrue, TIfFalse = null>(
     urlToCheck: NonNullable<InertiaLinkProps['href']>,
     ifTrue: TIfTrue,
     ifFalse?: TIfFalse,
-) => TIfTrue | TIfFalse;
+) => TIfTrue | TIfFalse | null;
 
-export type UseCurrentUrlReturn = {
+export interface UseCurrentUrlReturn {
     currentUrl: string;
     isCurrentUrl: IsCurrentUrlFn;
     isCurrentOrParentUrl: IsCurrentOrParentUrlFn;
     whenCurrentUrl: WhenCurrentUrlFn;
-};
+}
 
 export function useCurrentUrl(): UseCurrentUrlReturn {
     const page = usePage();
     const currentUrlPath = new URL(
         page.url,
-        typeof window !== 'undefined'
-            ? window.location.origin
-            : 'http://localhost',
+        typeof window === 'undefined'
+            ? 'http://localhost'
+            : window.location.origin,
     ).pathname;
 
     const isCurrentUrl: IsCurrentUrlFn = (
         urlToCheck: NonNullable<InertiaLinkProps['href']>,
         currentUrl?: string,
-        startsWith: boolean = false,
+        startsWith = false,
     ) => {
         const urlToCompare = currentUrl ?? currentUrlPath;
         const urlString = toUrl(urlToCheck);
@@ -62,22 +62,19 @@ export function useCurrentUrl(): UseCurrentUrlReturn {
     const isCurrentOrParentUrl: IsCurrentOrParentUrlFn = (
         urlToCheck: NonNullable<InertiaLinkProps['href']>,
         currentUrl?: string,
-    ) => {
-        return isCurrentUrl(urlToCheck, currentUrl, true);
-    };
+    ) => isCurrentUrl(urlToCheck, currentUrl, true);
 
     const whenCurrentUrl: WhenCurrentUrlFn = <TIfTrue, TIfFalse = null>(
         urlToCheck: NonNullable<InertiaLinkProps['href']>,
         ifTrue: TIfTrue,
-        ifFalse: TIfFalse = null as TIfFalse,
-    ): TIfTrue | TIfFalse => {
-        return isCurrentUrl(urlToCheck) ? ifTrue : ifFalse;
-    };
+        ifFalse?: TIfFalse,
+    ): TIfTrue | TIfFalse | null =>
+        isCurrentUrl(urlToCheck) ? ifTrue : (ifFalse ?? null);
 
     return {
         currentUrl: currentUrlPath,
-        isCurrentUrl,
         isCurrentOrParentUrl,
+        isCurrentUrl,
         whenCurrentUrl,
     };
 }

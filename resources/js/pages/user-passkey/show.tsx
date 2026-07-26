@@ -7,15 +7,15 @@ import { show } from '@/routes/passkeys';
 import type { BreadcrumbItem } from '@/types';
 import type { Passkey } from '@/types/auth';
 
-type Props = {
+interface Props {
     canManagePasskeys?: boolean;
     passkeys?: Passkey[];
-};
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Passkeys',
         href: show(),
+        title: 'Passkeys',
     },
 ];
 

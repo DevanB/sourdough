@@ -21,11 +21,11 @@ import type {
     TeamPermissions,
 } from '@/types/teams';
 
-type TeamProp = {
+interface TeamProp {
     id: string;
     name: string;
     isPersonal: boolean;
-};
+}
 
 export default function TeamEdit({
     team,
@@ -43,8 +43,8 @@ export default function TeamEdit({
     canLeave: boolean;
 }) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Teams', href: index() },
-        { title: team.name, href: edit(team.id) },
+        { href: index(), title: 'Teams' },
+        { href: edit(team.id), title: team.name },
     ];
 
     const pageTitle = permissions.canUpdateTeam

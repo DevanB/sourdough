@@ -12,11 +12,11 @@ import {
 } from '@/components/ui/card';
 import { regenerateRecoveryCodes } from '@/routes/two-factor';
 
-type Props = {
+interface Props {
     recoveryCodesList: string[];
     fetchRecoveryCodes: () => Promise<void>;
     errors: string[];
-};
+}
 
 export default function TwoFactorRecoveryCodes({
     recoveryCodesList,
@@ -81,7 +81,9 @@ export default function TwoFactorRecoveryCodes({
                         <Form
                             {...regenerateRecoveryCodes.form()}
                             options={{ preserveScroll: true }}
-                            onSuccess={fetchRecoveryCodes}
+                            onSuccess={() => {
+                                void fetchRecoveryCodes();
+                            }}
                         >
                             {({ processing }) => (
                                 <Button

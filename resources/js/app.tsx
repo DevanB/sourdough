@@ -4,11 +4,14 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { initializeTheme } from '@/hooks/use-appearance';
 import '../css/app.css';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME ?? 'Laravel';
 
 void createInertiaApp({
-    title: (title) => (title ? `${title} - ${appName}` : appName),
+    progress: {
+        color: '#4B5563',
+    },
     strictMode: true,
+    title: (title) => (title ? `${title} - ${appName}` : appName),
     withApp(app) {
         return (
             <TooltipProvider delayDuration={0}>
@@ -16,9 +19,6 @@ void createInertiaApp({
                 <Toaster />
             </TooltipProvider>
         );
-    },
-    progress: {
-        color: '#4B5563',
     },
 });
 

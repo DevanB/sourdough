@@ -3,11 +3,11 @@ import { useSyncExternalStore } from 'react';
 export type ResolvedAppearance = 'light' | 'dark';
 export type Appearance = ResolvedAppearance | 'system';
 
-export type UseAppearanceReturn = {
+export interface UseAppearanceReturn {
     readonly appearance: Appearance;
     readonly resolvedAppearance: ResolvedAppearance;
     readonly updateAppearance: (mode: Appearance) => void;
-};
+}
 
 const listeners = new Set<() => void>();
 let currentAppearance: Appearance = 'system';
@@ -26,6 +26,7 @@ const setCookie = (name: string, value: string, days = 365): void => {
     }
 
     const maxAge = days * 24 * 60 * 60;
+    // oxlint-disable-next-line unicorn/no-document-cookie -- the server reads this cookie to render the correct theme on first paint, so it must be a plain document cookie.
     document.cookie = `${name}=${value};path=/;max-age=${maxAge};SameSite=Lax`;
 };
 
@@ -34,12 +35,17 @@ const getStoredAppearance = (): Appearance => {
         return 'system';
     }
 
-    return (localStorage.getItem('appearance') as Appearance) || 'system';
+    const stored = localStorage.getItem('appearance');
+
+    if (stored === 'light' || stored === 'dark' || stored === 'system') {
+        return stored;
+    }
+
+    return 'system';
 };
 
-const isDarkMode = (appearance: Appearance): boolean => {
-    return appearance === 'dark' || (appearance === 'system' && prefersDark());
-};
+const isDarkMode = (appearance: Appearance): boolean =>
+    appearance === 'dark' || (appearance === 'system' && prefersDark());
 
 const applyTheme = (appearance: Appearance): void => {
     if (typeof document === 'undefined') {
@@ -52,13 +58,18 @@ const applyTheme = (appearance: Appearance): void => {
     document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
 };
 
+// oxlint-disable-next-line promise/prefer-await-to-callbacks -- `useSyncExternalStore` requires a callback-based subscribe function.
 const subscribe = (callback: () => void) => {
     listeners.add(callback);
 
     return () => listeners.delete(callback);
 };
 
-const notify = (): void => listeners.forEach((listener) => listener());
+const notify = (): void => {
+    for (const listener of listeners) {
+        listener();
+    }
+};
 
 function updateAppearance(mode: Appearance): void {
     currentAppearance = mode;
@@ -77,14 +88,18 @@ const mediaQuery = (): MediaQueryList | null => {
     return window.matchMedia('(prefers-color-scheme: dark)');
 };
 
-const handleSystemThemeChange = (): void => applyTheme(currentAppearance);
+const handleSystemThemeChange = (): void => {
+    applyTheme(currentAppearance);
+};
 
 export function initializeTheme(): void {
     if (typeof window === 'undefined') {
         return;
     }
 
-    if (!localStorage.getItem('appearance')) {
+    const storedAppearance = localStorage.getItem('appearance');
+
+    if (storedAppearance === null || storedAppearance === '') {
         localStorage.setItem('appearance', 'system');
         setCookie('appearance', 'system');
     }

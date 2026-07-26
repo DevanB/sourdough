@@ -16,36 +16,35 @@ export function Breadcrumbs({
 }: {
     breadcrumbs: BreadcrumbItemType[];
 }) {
+    if (breadcrumbs.length === 0) {
+        return null;
+    }
+
     return (
-        <>
-            {breadcrumbs.length > 0 && (
-                <Breadcrumb>
-                    <BreadcrumbList>
-                        {breadcrumbs.map((item) => {
-                            const isLast =
-                                item === breadcrumbs[breadcrumbs.length - 1];
-                            return (
-                                <Fragment key={toUrl(item.href)}>
-                                    <BreadcrumbItem>
-                                        {isLast ? (
-                                            <BreadcrumbPage>
-                                                {item.title}
-                                            </BreadcrumbPage>
-                                        ) : (
-                                            <BreadcrumbLink asChild>
-                                                <Link href={item.href}>
-                                                    {item.title}
-                                                </Link>
-                                            </BreadcrumbLink>
-                                        )}
-                                    </BreadcrumbItem>
-                                    {!isLast && <BreadcrumbSeparator />}
-                                </Fragment>
-                            );
-                        })}
-                    </BreadcrumbList>
-                </Breadcrumb>
-            )}
-        </>
+        <Breadcrumb>
+            <BreadcrumbList>
+                {breadcrumbs.map((item) => {
+                    const isLast = item === breadcrumbs.at(-1);
+                    return (
+                        <Fragment key={toUrl(item.href)}>
+                            <BreadcrumbItem>
+                                {isLast ? (
+                                    <BreadcrumbPage>
+                                        {item.title}
+                                    </BreadcrumbPage>
+                                ) : (
+                                    <BreadcrumbLink asChild>
+                                        <Link href={item.href}>
+                                            {item.title}
+                                        </Link>
+                                    </BreadcrumbLink>
+                                )}
+                            </BreadcrumbItem>
+                            {!isLast && <BreadcrumbSeparator />}
+                        </Fragment>
+                    );
+                })}
+            </BreadcrumbList>
+        </Breadcrumb>
     );
 }

@@ -6,15 +6,15 @@ import PasskeyItem from '@/components/passkey-item';
 import PasskeyRegistration from '@/components/passkey-register';
 import type { Passkey } from '@/types/auth';
 
-export type Props = {
+export interface Props {
     canManagePasskeys?: boolean;
     passkeys?: Passkey[];
-};
+}
 
 function deletePasskey(id: number, onError: () => void): void {
     router.delete(destroy.url(id), {
-        preserveScroll: true,
         onError,
+        preserveScroll: true,
     });
 }
 
@@ -22,19 +22,17 @@ function reloadAfterPasskeyRegistration(): void {
     router.reload();
 }
 
-const EmptyState = () => {
-    return (
-        <div className="p-8 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
-                <KeyRound className="h-7 w-7 text-muted-foreground" />
-            </div>
-            <p className="font-medium">No passkeys yet</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-                Add a passkey to sign in without a password
-            </p>
+const EmptyState = () => (
+    <div className="p-8 text-center">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
+            <KeyRound className="h-7 w-7 text-muted-foreground" />
         </div>
-    );
-};
+        <p className="font-medium">No passkeys yet</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+            Add a passkey to sign in without a password
+        </p>
+    </div>
+);
 
 export default function ManagePasskeys(props: Props) {
     const passkeys = props.passkeys ?? [];

@@ -20,6 +20,16 @@ export function NavUser() {
     const { state } = useSidebar();
     const isMobile = useIsMobile();
 
+    let dropdownSide: 'bottom' | 'left' = 'bottom';
+
+    if (!isMobile && state === 'collapsed') {
+        dropdownSide = 'left';
+    }
+
+    if (auth.user === null) {
+        return null;
+    }
+
     return (
         <SidebarMenu>
             <SidebarMenuItem>
@@ -37,13 +47,7 @@ export function NavUser() {
                     <DropdownMenuContent
                         className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
                         align="end"
-                        side={
-                            isMobile
-                                ? 'bottom'
-                                : state === 'collapsed'
-                                  ? 'left'
-                                  : 'bottom'
-                        }
+                        side={dropdownSide}
                     >
                         <UserMenuContent user={auth.user} />
                     </DropdownMenuContent>

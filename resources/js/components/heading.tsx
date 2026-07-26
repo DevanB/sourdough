@@ -18,7 +18,7 @@ export default function Heading({
             >
                 {title}
             </h2>
-            {description && (
+            {description !== undefined && description !== '' && (
                 <p className="text-sm text-muted-foreground">{description}</p>
             )}
         </header>

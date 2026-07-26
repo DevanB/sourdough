@@ -3,10 +3,10 @@ import type { ReactNode } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import type { AppVariant } from '@/types';
 
-type Props = {
+interface Props {
     children: ReactNode;
     variant?: AppVariant;
-};
+}
 
 export function AppShell({ children, variant = 'sidebar' }: Props) {
     const isOpen = usePage().props.sidebarOpen;

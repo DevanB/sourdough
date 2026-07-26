@@ -1,32 +1,33 @@
 import { usePasskeyRegister } from '@laravel/passkeys/react';
+import type { SubmitEvent } from 'react';
 import { useState } from 'react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-type Props = {
+interface Props {
     onSuccess: () => void;
-};
+}
 
 export default function PasskeyRegistration({ onSuccess }: Props) {
     const [name, setName] = useState(() => {
         const ua = navigator.userAgent;
 
         const browser = [
-            { pattern: /Edg|Edge/, name: 'Edge' },
-            { pattern: /OPR|Opera|OPiOS/, name: 'Opera' },
-            { pattern: /Firefox|FxiOS/, name: 'Firefox' },
-            { pattern: /Chrome|CriOS/, name: 'Chrome' },
-            { pattern: /Safari/, name: 'Safari' },
+            { name: 'Edge', pattern: /Edg|Edge/u },
+            { name: 'Opera', pattern: /OPR|Opera|OPiOS/u },
+            { name: 'Firefox', pattern: /Firefox|FxiOS/u },
+            { name: 'Chrome', pattern: /Chrome|CriOS/u },
+            { name: 'Safari', pattern: /Safari/u },
         ].find(({ pattern }) => pattern.test(ua))?.name;
 
         const os = [
-            { pattern: /iPhone/, name: 'iPhone' },
-            { pattern: /iPad|Macintosh(?=.*Mobile)/, name: 'iPad' },
-            { pattern: /Android/, name: 'Android' },
-            { pattern: /Mac/, name: 'Mac' },
-            { pattern: /Windows/, name: 'Windows' },
+            { name: 'iPhone', pattern: /iPhone/u },
+            { name: 'iPad', pattern: /iPad|Macintosh(?=.*Mobile)/u },
+            { name: 'Android', pattern: /Android/u },
+            { name: 'Mac', pattern: /Mac/u },
+            { name: 'Windows', pattern: /Windows/u },
         ].find(({ pattern }) => pattern.test(ua))?.name;
 
         return [browser, os].filter(Boolean).join(' on ') || '';
@@ -41,7 +42,7 @@ export default function PasskeyRegistration({ onSuccess }: Props) {
         },
     });
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!name.trim()) {
@@ -66,7 +67,12 @@ export default function PasskeyRegistration({ onSuccess }: Props) {
 
     if (!showForm) {
         return (
-            <Button variant="outline" onClick={() => setShowForm(true)}>
+            <Button
+                variant="outline"
+                onClick={() => {
+                    setShowForm(true);
+                }}
+            >
                 Add passkey
             </Button>
         );
@@ -74,7 +80,9 @@ export default function PasskeyRegistration({ onSuccess }: Props) {
 
     return (
         <form
-            onSubmit={handleSubmit}
+            onSubmit={(e) => {
+                void handleSubmit(e);
+            }}
             className="space-y-4 rounded-lg border border-border bg-muted/50 p-4"
         >
             <div className="grid gap-2">
@@ -83,7 +91,9 @@ export default function PasskeyRegistration({ onSuccess }: Props) {
                     id="passkey-name"
                     type="text"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => {
+                        setName(e.target.value);
+                    }}
                     placeholder="e.g., MacBook Pro, iPhone"
                     className="mt-1 block w-full border-foreground/20"
                     autoFocus
@@ -93,7 +103,7 @@ export default function PasskeyRegistration({ onSuccess }: Props) {
                 </p>
             </div>
 
-            {error && <InputError message={error} />}
+            {error !== null && error !== '' && <InputError message={error} />}
 
             <div className="flex gap-2">
                 <Button type="submit" disabled={isLoading || !name.trim()}>
