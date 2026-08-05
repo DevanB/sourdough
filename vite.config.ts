@@ -6,7 +6,17 @@ import react, {reactCompilerPreset} from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
 import {defineConfig} from 'vite-plus';
 
+const conductorPort = process.env.CONDUCTOR_PORT
+    ? Number(process.env.CONDUCTOR_PORT)
+    : undefined;
+
 export default defineConfig({
+    server: conductorPort
+        ? {
+              port: conductorPort + 1,
+              strictPort: true,
+          }
+        : undefined,
     lint: {
         options: {
             typeAware: true,
@@ -61,7 +71,7 @@ export default defineConfig({
             ssr: {
                 entry: 'resources/js/app.tsx',
                 host: '127.0.0.1',
-                port: 13714,
+                port: conductorPort ? conductorPort + 2 : 13714,
                 cluster: false,
                 sourcemap: false,
             },
